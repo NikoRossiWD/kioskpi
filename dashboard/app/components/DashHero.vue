@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import type { StatDoc } from '#shared/types/models'
-
 const { weather } = useWeather()
 
 const now = useNow()
-const { items: stats } = useCollection<StatDoc>('stats', 'order')
 
 const timeFmt = new Intl.DateTimeFormat('it-IT', { hour: '2-digit', minute: '2-digit' })
 const dateFmt = new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })
@@ -58,18 +55,10 @@ const greeting = computed(() => {
       </template>
     </div>
 
-    <ul class="stats">
-      <li v-for="s in stats" :key="s.id">
-        <span class="label">{{ s.label }}</span>
-        <span class="value tabular">{{ s.value }}</span>
-        <span v-if="s.hint" class="hint">
-          <DashIcon v-if="s.trend === 'up'" name="arrow-up" :size="14" />
-          {{ s.hint }}
-        </span>
-      </li>
-    </ul>
-
-    <img class="logo" src="/webison-logo.svg" alt="Webison" width="161" height="33">
+    <div class="side">
+      <img class="logo" src="/webison-logo.svg" alt="Webison" width="161" height="33">
+      <DashMusic />
+    </div>
   </section>
 </template>
 
@@ -152,31 +141,19 @@ const greeting = computed(() => {
   opacity: 0.85;
 }
 
-/* Numeri secondari: piccoli, in colonna sotto il logo */
-.stats {
-  list-style: none;
-  padding: 0;
+/* Colonna destra: logo in alto, musica sotto */
+.side {
+  justify-self: end;
+  align-self: stretch;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  justify-self: end;
-  margin-top: 44px; /* spazio per il logo sopra */
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
 }
-.stats li {
-  display: flex;
-  align-items: baseline;
-  justify-content: flex-end;
-  gap: 10px;
-}
-.label { font-size: 1rem; font-weight: 700; opacity: 0.85; }
-.value { font-size: 1.35rem; font-weight: 900; line-height: 1.1; min-width: 2ch; text-align: right; }
-.hint { display: none; }
 
 /* Logo originale (scritta e toggle bianchi, pallino viola) sulla fascia colorata */
 .logo {
-  position: absolute;
-  top: 28px;
-  right: 44px;
   height: 30px;
   width: auto;
 }

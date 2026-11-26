@@ -37,7 +37,7 @@ function due(days: number) {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 10px;
 }
 
 li.primary { --c: var(--brand-primary); }
@@ -52,14 +52,14 @@ li.tertiary { --c: #f2c200; }
   gap: 12px;
 }
 
-.name { font-size: 1.25rem; font-weight: 900; }
+.name { font-size: 1.15rem; font-weight: 900; }
 .client { font-weight: 700; color: var(--muted); }
 .due { font-size: 1.05rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
 .due.soon { color: var(--brand-secondary); }
 
 .bar {
-  height: 10px;
-  margin: 8px 0 6px;
+  height: 8px;
+  margin: 5px 0 3px;
   border-radius: 999px;
   background: var(--surface-2);
   border: 1px solid var(--border);
@@ -72,5 +72,5 @@ li.tertiary { --c: #f2c200; }
   background: var(--c);
 }
 
-.phase, .pct { font-size: 1rem; font-weight: 700; color: var(--muted); }
+.phase, .pct { font-size: 0.9rem; font-weight: 700; color: var(--muted); }
 </style>

@@ -35,13 +35,26 @@ export interface ProjectDoc {
   color: Accent
 }
 
-/** stats — numeri nella fascia in alto */
-export interface StatDoc {
+/** sites — siti dei clienti da monitorare (semaforo) */
+export interface SiteDoc {
   order: number
-  label: string
-  value: string
-  hint?: string
-  trend?: 'up' | 'down'
+  name: string
+  url: string
+}
+
+/** commute — destinazioni per "Ritorno a casa" (partenza: ufficio, in nuxt.config) */
+export interface CommuteDoc {
+  order: number
+  label: string // es. "Lesmo" (o "Nome · Lesmo")
+  lat: number
+  lon: number
+}
+
+/** music — un solo documento: cosa sta suonando (aggiornato in futuro da Spotify) */
+export interface MusicDoc {
+  title: string
+  artist: string
+  playing: boolean
 }
 
 /** deadlines */

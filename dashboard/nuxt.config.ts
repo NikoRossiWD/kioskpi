@@ -20,6 +20,8 @@ export default defineNuxtConfig({
       useEmulators: true,
       // Città del meteo (Open-Meteo). Coordinate: https://open-meteo.com/en/docs/geocoding-api
       weather: { city: 'Monza', latitude: 45.5845, longitude: 9.2744 },
+      // Punto di partenza per "Ritorno a casa" (ora: centro di Monza; mettere l'indirizzo dell'ufficio)
+      office: { latitude: 45.5845, longitude: 9.2744 },
     },
   },
 

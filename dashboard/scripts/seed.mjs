@@ -60,11 +60,13 @@ for (const p of demo.projects) {
   const { dueInDays, ...rest } = p
   await add('projects', { ...rest, due: inDays(dueInDays) })
 }
-for (const s of demo.stats) await add('stats', s)
+for (const s of demo.sites) await add('sites', s)
+for (const c of demo.commute) await add('commute', c)
+for (const m of demo.music) await add('music', m)
 for (const d of demo.deadlines) {
   const { dueInDays, ...rest } = d
   await add('deadlines', { ...rest, due: inDays(dueInDays) })
 }
 for (const n of demo.notes) await add('notes', { ...n, updatedAt: new Date() })
 
-console.log('Seed completato: events, focus, projects, stats, deadlines, notes')
+console.log('Seed completato: events, focus, projects, deadlines, notes, sites, commute, music')

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Piccolo set di icone a tratto (SVG inline: niente librerie, niente richieste extra).
 defineProps<{
-  name: 'sun' | 'moon' | 'cloud' | 'fog' | 'rain' | 'snow' | 'storm' | 'partly' | 'video' | 'check' | 'arrow-up' | 'drop'
+  name: 'sun' | 'moon' | 'cloud' | 'fog' | 'rain' | 'snow' | 'storm' | 'partly' | 'video' | 'check' | 'arrow-up' | 'drop' | 'music' | 'car' | 'globe'
   size?: number
 }>()
 </script>
@@ -42,5 +42,20 @@ defineProps<{
     <path v-else-if="name === 'check'" d="M5 12.5l4.5 4.5L19 7.5" />
     <path v-else-if="name === 'arrow-up'" d="M12 19V5M6 11l6-6 6 6" />
     <path v-else-if="name === 'drop'" d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z" />
+    <template v-else-if="name === 'music'">
+      <path d="M9 18V5l11-2v13" />
+      <circle cx="6" cy="18" r="3" />
+      <circle cx="17" cy="16" r="3" />
+    </template>
+    <template v-else-if="name === 'car'">
+      <path d="M5 16V11l2-5h10l2 5v5" />
+      <path d="M3 16h18v3H3z" />
+      <circle cx="7.5" cy="13.5" r="1" />
+      <circle cx="16.5" cy="13.5" r="1" />
+    </template>
+    <template v-else-if="name === 'globe'">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
+    </template>
   </svg>
 </template>

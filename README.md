@@ -419,6 +419,20 @@ dashboard/
   l'IP del PC (raggiungibile dai telefoni sulla stessa rete); aprendo la dashboard da `localhost`
   il QR punta a `localhost` e dal telefono non funziona. Generato in locale con `uqr` (nessun servizio esterno).
 
+### Siti clienti, ritorno a casa, musica
+
+- **Siti clienti:** controllati dal browser ogni 5 min con `fetch` "no-cors" (verde < 1,5 s,
+  giallo lento, magenta offline). Rileva DNS/connessione/certificato/timeout; un errore 500 risulta
+  comunque "online". Demo: webison.it, example.com/.org e un dominio `.invalid` per vedere l'offline.
+- **Ritorno a casa:** tempi in auto da [OSRM](https://project-osrm.org) (gratis, senza chiave,
+  **senza traffico**), aggiornati ogni 30 min, + avviso pioggia dalle prossime 6 ore del meteo.
+  Partenza: `runtimeConfig.public.office` in `nuxt.config.ts` (ora centro di Monza: mettere
+  l'indirizzo dell'ufficio). Destinazioni nella collezione `commute`: nel repo pubblico solo i
+  comuni; i nomi si possono aggiungere nell'etichetta dall'UI degli emulatori.
+- **Musica:** legge un documento della collezione `music`; un futuro connettore Spotify lo
+  aggiornerà (il kiosk non deve fare login a Spotify).
+- I numeri CRM (lead, preventivi, ore) sono stati tolti: torneranno quando ci sarà il CRM.
+
 ### Dati (Firestore)
 
 | Collezione | Sezione | Fonte futura |
@@ -426,7 +440,9 @@ dashboard/
 | `events` | Prossimi appuntamenti (max 3, compatta) | Google Calendar |
 | `focus` | To-do di oggi (sezione principale) | admin / to-do |
 | `projects` | Progetti attivi | admin / gestionale |
-| `stats` | numeri nella fascia in alto | CRM / fatturazione |
+| `sites` | Siti clienti (semaforo) | admin |
+| `commute` | Ritorno a casa (destinazioni) | admin |
+| `music` | "Sta suonando" (piccolo, in alto a destra) | connettore Spotify (futuro) |
 | `deadlines` | Scadenze | admin / calendario |
 | `notes` | Note | admin |
 

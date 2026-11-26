@@ -27,10 +27,20 @@
     { "order": 4, "name": "Landing lead gen", "client": "FitZone", "phase": "Test finali", "progress": 90, "dueInDays": 3, "color": "tertiary" }
   ],
 
-  "stats": [
-    { "order": 1, "label": "Lead del mese", "value": "18", "hint": "+4 vs mese scorso", "trend": "up" },
-    { "order": 2, "label": "Preventivi aperti", "value": "6", "hint": "€ 24.500" },
-    { "order": 3, "label": "Ore fatturabili", "value": "96", "hint": "su 140 obiettivo" }
+  "sites": [
+    { "order": 1, "name": "Webison", "url": "https://www.webison.it" },
+    { "order": 2, "name": "Rossi Arredamenti (demo)", "url": "https://example.com" },
+    { "order": 3, "name": "Studio Bianchi (demo)", "url": "https://example.org" },
+    { "order": 4, "name": "FitZone (demo offline)", "url": "https://fitzone.invalid" }
+  ],
+
+  "commute": [
+    { "order": 1, "label": "Lesmo", "lat": 45.6474, "lon": 9.3077 },
+    { "order": 2, "label": "Lissone", "lat": 45.6131, "lon": 9.2440 }
+  ],
+
+  "music": [
+    { "title": "Midnight City", "artist": "M83", "playing": true }
   ],
 
   "deadlines": [
