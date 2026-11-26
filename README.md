@@ -412,7 +412,8 @@ dashboard/
 ### Meteo e check-in
 
 - **Meteo:** [Open-Meteo](https://open-meteo.com), gratuito, nessuna chiave, chiamato dal browser.
-  Città in `nuxt.config.ts` → `runtimeConfig.public.weather` (nome + latitudine/longitudine).
+  Città: **Monza**, in `nuxt.config.ts` → `runtimeConfig.public.weather` (nome + latitudine/longitudine).
+  Mostra ora attuale + le **prossime 6 ore** (evidenziate se pioggia ≥ 50%).
   Se la rete cade resta l'ultimo dato valido.
 - **QR check-in** (in basso a destra): codifica `<indirizzo della dashboard>/checkin`. Sul Pi è
   l'IP del PC (raggiungibile dai telefoni sulla stessa rete); aprendo la dashboard da `localhost`
@@ -422,8 +423,8 @@ dashboard/
 
 | Collezione | Sezione | Fonte futura |
 |---|---|---|
-| `events` | Agenda di oggi | Google Calendar |
-| `focus` | Focus di oggi | admin / to-do |
+| `events` | Prossimi appuntamenti (max 3, compatta) | Google Calendar |
+| `focus` | To-do di oggi (sezione principale) | admin / to-do |
 | `projects` | Progetti attivi | admin / gestionale |
 | `stats` | numeri nella fascia in alto | CRM / fatturazione |
 | `deadlines` | Scadenze | admin / calendario |
