@@ -131,13 +131,12 @@ const greeting = computed(() => {
   opacity: 0.85;
 }
 
-/* Logo in bianco sulla fascia colorata */
+/* Logo originale (scritta e toggle bianchi, pallino viola) sulla fascia colorata */
 .logo {
   position: absolute;
   top: 28px;
   right: 44px;
   height: 30px;
   width: auto;
-  filter: brightness(0) invert(1);
 }
 </style>

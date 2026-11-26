@@ -12,7 +12,7 @@ useHead({
     <DashHero />
 
     <div class="grid">
-      <DashAgenda class="agenda" />
+      <DashAgenda />
       <div class="col">
         <DashFocus />
         <DashProjects class="grow" />

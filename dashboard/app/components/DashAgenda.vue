@@ -42,7 +42,7 @@ const remaining = computed(() => items.value.filter(i => i.status !== 'past').le
 
 <template>
   <DashCard title="Agenda di oggi" accent="primary" :meta="remaining ? `${remaining} da fare` : 'Giornata finita'">
-    <ol class="agenda">
+    <ol class="events">
       <li v-for="e in items" :key="e.start + e.title" :class="[e.status, e.kind]">
         <div class="time tabular">
           <span class="start">{{ e.start }}</span>
@@ -62,7 +62,9 @@ const remaining = computed(() => items.value.filter(i => i.status !== 'past').le
 </template>
 
 <style scoped>
-.agenda {
+/* Nota: non chiamare questa classe come la radice del componente (DashCard):
+   gli stili scoped del padre si applicano anche alla radice del figlio. */
+.events {
   list-style: none;
   padding: 0;
   display: flex;
