@@ -9,7 +9,8 @@ Serve a replicare tutto su un altro Pi.
 segui [WIFI-UFFICIO.md](WIFI-UFFICIO.md). Copia anche sul Pi: dalla console `cat ~/WIFI-UFFICIO.md`
 (con la dashboard a schermo: **Ctrl+Alt+F2** per la console). Annota l'IP del Pi (`hostname -I`).
 
-**2. PC dell'ufficio: prerequisiti** (una volta) — Node.js, Git e **Java 21** per gli emulatori:
+**2. PC dell'ufficio: prerequisiti** (una volta) — **Node.js 20.19 o superiore** (consigliato 22/24,
+verifica con `node -v`), Git e **Java 21** per gli emulatori:
 
 ```powershell
 winget install EclipseAdoptium.Temurin.21.JRE
@@ -51,6 +52,9 @@ Senza SSH (tastiera sul Pi, console con Ctrl+Alt+F2): `sudo nano /etc/default/de
 `DESKPI_URL=`, salva (Ctrl+O, Invio, Ctrl+X), poi `sudo systemctl restart deskpi-kiosk` e Ctrl+Alt+F1.
 
 **7. Verifica:** sul monitor la dashboard; admin da telefono/PC su `http://IP_DEL_PC:3000/admin`.
+
+**A fine giornata:** chiudi gli emulatori con **Ctrl+C** nel loro terminale (non chiudendo la finestra):
+così salvano i dati di test in `dashboard/.firebase-data/` e al prossimo avvio li ritrovi.
 
 **Se il Pi mostra una pagina di errore:** PC e Pi sulla stessa rete? `npm run dev` ed emulatori accesi?
 Firewall (punto 4)? Dal Pi: `curl -I http://IP_DEL_PC:3000` deve rispondere `200`.
