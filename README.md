@@ -284,6 +284,18 @@ ssh deskpi "sudo systemctl daemon-reload && sudo systemctl enable --now deskpi-k
 
 (`sed` toglie eventuali fine riga Windows; `install` copia e imposta i permessi in un colpo solo.)
 
+**Policy Chromium** (`pi/chromium-policy.json` → `/etc/chromium/policies/managed/deskpi.json`):
+disattiva traduttore, salvataggio password, autocompilazione, login Google, promozioni,
+richieste di notifiche e posizione. Verifica sul Pi: aprire `chrome://policy` (non serve di solito).
+
+```powershell
+scp chromium-policy.json deskpi:/tmp/deskpi.json
+ssh deskpi "sudo install -d /etc/chromium/policies/managed && sudo install -m 644 /tmp/deskpi.json /etc/chromium/policies/managed/deskpi.json && sudo systemctl restart deskpi-kiosk"
+```
+
+Anche la pagina Nuxt dichiara `translate="no"` e `<meta name="google" content="notranslate">`
+(doppia protezione contro la barra del traduttore).
+
 ### 3.3 Uso quotidiano
 
 ```bash

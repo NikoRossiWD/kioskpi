@@ -12,9 +12,13 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      htmlAttrs: { lang: 'it' },
+      // translate="no" + meta google notranslate: Chromium non propone il traduttore
+      htmlAttrs: { lang: 'it', translate: 'no' },
       title: 'DeskPi',
-      meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
+      meta: [
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { name: 'google', content: 'notranslate' },
+      ],
     },
   },
 })
