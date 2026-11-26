@@ -9,6 +9,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@fontsource/red-hat-display": "^5.3.0",
     "nuxt": "^4.7.0",
     "vue": "^3.5.46"
   }

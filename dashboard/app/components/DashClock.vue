@@ -32,14 +32,16 @@ onBeforeUnmount(() => clearInterval(timer))
 }
 
 .time {
-  font-size: 7rem;
-  font-weight: 300;
+  font-size: 7.5rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 
 .date {
   font-size: 2rem;
+  font-weight: 700;
   color: var(--muted);
   display: inline-block;
 }

@@ -1,14 +1,34 @@
-/* Tema scuro: meno luce sulla scrivania e meno consumo/usura del monitor */
+/* Font del brand, servito in locale (funziona anche senza internet sul Pi) */
+@import '@fontsource/red-hat-display/latin-400.css';
+@import '@fontsource/red-hat-display/latin-700.css';
+@import '@fontsource/red-hat-display/latin-900.css';
+
+/*
+ * Brand Webison (riferimento: webison.it)
+ *   primario   #4a2ed8  viola
+ *   secondario #ee258e  magenta
+ *   terziario  #ffeb5f  giallo
+ *   gradiente hero: #ee7752 → #e73c7e → #4a2ed8 → #23d5ab
+ * Base scura: schermo acceso tutto il giorno sulla scrivania → meno luce e meno abbagliamento.
+ */
 :root {
-  --bg: #0d0f12;
-  --surface: #16191e;
-  --border: #23272e;
-  --text: #e8eaed;
-  --muted: #8a919c;
-  --accent: #6aa7ff;
+  --brand-primary: #4a2ed8;
+  --brand-secondary: #ee258e;
+  --brand-tertiary: #ffeb5f;
+  --brand-gradient: linear-gradient(-45deg, #ee7752, #e73c7e, #4a2ed8, #23d5ab);
+  --brand-gradient-violet: linear-gradient(135deg, #4a2ed8, #7d5cf5);
+
+  --bg: #0e0b1a;
+  --surface: #17132b;
+  --surface-2: #201a3d;
+  --border: rgba(255, 255, 255, 0.07);
+  --text: #ffffff;
+  --muted: rgba(255, 255, 255, 0.58);
+
   --gap: 24px;
-  --radius: 16px;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --radius: 20px;
+
+  font-family: 'Red Hat Display', system-ui, sans-serif;
   color: var(--text);
   background: var(--bg);
 }
@@ -21,7 +41,10 @@ html, body, #__nuxt {
 }
 
 body {
-  background: var(--bg);
+  background:
+    radial-gradient(1200px 600px at 100% 0%, rgba(74, 46, 216, 0.22), transparent 60%),
+    radial-gradient(900px 500px at 0% 100%, rgba(238, 37, 142, 0.12), transparent 60%),
+    var(--bg);
   -webkit-font-smoothing: antialiased;
   user-select: none;
 }
