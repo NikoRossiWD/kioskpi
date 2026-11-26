@@ -1,0 +1,15 @@
+{
+  "name": "deskpi-dashboard",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev --host 0.0.0.0",
+    "build": "nuxt build",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "nuxt": "^4.7.0",
+    "vue": "^3.5.46"
+  }
+}

@@ -1,0 +1,30 @@
+/* Tema scuro: meno luce sulla scrivania e meno consumo/usura del monitor */
+:root {
+  --bg: #0d0f12;
+  --surface: #16191e;
+  --border: #23272e;
+  --text: #e8eaed;
+  --muted: #8a919c;
+  --accent: #6aa7ff;
+  --gap: 24px;
+  --radius: 16px;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+* { box-sizing: border-box; margin: 0; }
+
+html, body, #__nuxt {
+  height: 100%;
+  overflow: hidden;      /* niente barre di scorrimento sullo schermo fisso */
+}
+
+body {
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+/* Sul Pi il cursore viene nascosto anche a livello di sistema (fase 4); questo è un doppio sicuro */
+body.kiosk { cursor: none; }
