@@ -86,6 +86,24 @@ La rete resta salvata: al prossimo avvio il Pi si collega da solo a quella dispo
 
 ---
 
+## 6. Far mostrare al Pi la dashboard del PC dell'ufficio
+
+Sul PC dell'ufficio: `ipconfig` → "Indirizzo IPv4" (es. 10.0.12.50). Poi sul Pi:
+
+```bash
+sudo nano /etc/default/deskpi
+```
+
+Cambia la riga `DESKPI_URL=http://...:3000/?kiosk` mettendo l'IP del PC dell'ufficio.
+Salva: **Ctrl+O**, Invio, **Ctrl+X**. Poi:
+
+```bash
+sudo systemctl restart deskpi-kiosk
+```
+
+e **Ctrl+Alt+F1** per tornare alla dashboard. (Sul PC devono essere accesi `npm run emulators`
+e `npm run dev`: vedi la checklist in cima al README.)
+
 ## Problemi comuni
 
 | Sintomo | Causa probabile | Cosa fare |

@@ -3,26 +3,62 @@
 Diario di bordo del setup: cosa è stato fatto, con quali comandi e come ripristinare.
 Serve a replicare tutto su un altro Pi.
 
-## Ripartire da un altro PC (es. ufficio)
+## Checklist: ripartire in ufficio (o da un altro PC)
 
-Prerequisiti sul PC: Node.js e **Java 21** (per gli emulatori Firebase):
-`winget install EclipseAdoptium.Temurin.21.JRE`
+**1. Pi sul Wi-Fi dell'ufficio** (tastiera + monitor sul Pi, senza PC):
+segui [WIFI-UFFICIO.md](WIFI-UFFICIO.md). Copia anche sul Pi: dalla console `cat ~/WIFI-UFFICIO.md`
+(con la dashboard a schermo: **Ctrl+Alt+F2** per la console). Annota l'IP del Pi (`hostname -I`).
+
+**2. PC dell'ufficio: prerequisiti** (una volta) — Node.js, Git e **Java 21** per gli emulatori:
+
+```powershell
+winget install EclipseAdoptium.Temurin.21.JRE
+```
+
+(chiudi e riapri il terminale dopo l'installazione di Java)
+
+**3. Progetto:**
 
 ```powershell
 git clone https://github.com/NikoRossiWD/kioskpi.git
 cd kioskpi/dashboard
 npm install
-npm run emulators     # terminale 1: Firestore + Auth locali
-npm run seed          # una volta: carica i dati demo
+```
+
+**4. Avvio** — due terminali, nella cartella `dashboard`:
+
+```powershell
+npm run emulators     # terminale 1: Firestore + Auth (aspetta "All emulators ready")
+npm run seed          # solo la prima volta, con gli emulatori accesi: dati demo
 npm run dev           # terminale 2: app su http://localhost:3000
 ```
 
-Poi sul Pi aggiornare l'URL con l'IP di questo PC (sezione 3.3).
+- **Firewall di Windows:** al primo avvio chiede di consentire **Node.js** e **Java**: consenti.
+  ⚠️ Se la rete dell'ufficio è classificata come **"Pubblica"**, consentire "solo reti private"
+  blocca il Pi. In quel caso consenti anche su rete pubblica, oppure imposta la rete come privata
+  (Impostazioni → Rete e Internet → Wi-Fi/Ethernet → Tipo di profilo di rete).
 
-- **Wi-Fi dell'ufficio sul Pi** (tastiera + monitor, senza PC): [WIFI-UFFICIO.md](WIFI-UFFICIO.md),
-  copia anche sul Pi con `cat ~/WIFI-UFFICIO.md`.
-- **SSH dal nuovo PC:** `ssh raux@deskpi.local` (o l'IP) con la password; per entrare senza
-  password creare una chiave nuova su quel PC (sezione 2.3). Non copiare la chiave privata.
+**5. IP del PC dell'ufficio:** `ipconfig` → "Indirizzo IPv4" (es. `10.0.12.50`).
+
+**6. Puntare il Pi al PC dell'ufficio** — dal PC (chiede la password di `raux`; usa l'IP del Pi se
+`deskpi.local` non funziona), sostituendo `IP_DEL_PC`:
+
+```powershell
+ssh -t raux@deskpi.local "sudo sed -i 's|^DESKPI_URL=.*|DESKPI_URL=http://IP_DEL_PC:3000/?kiosk|' /etc/default/deskpi && sudo systemctl restart deskpi-kiosk"
+```
+
+Senza SSH (tastiera sul Pi, console con Ctrl+Alt+F2): `sudo nano /etc/default/deskpi`, cambia la riga
+`DESKPI_URL=`, salva (Ctrl+O, Invio, Ctrl+X), poi `sudo systemctl restart deskpi-kiosk` e Ctrl+Alt+F1.
+
+**7. Verifica:** sul monitor la dashboard; admin da telefono/PC su `http://IP_DEL_PC:3000/admin`.
+
+**Se il Pi mostra una pagina di errore:** PC e Pi sulla stessa rete? `npm run dev` ed emulatori accesi?
+Firewall (punto 4)? Dal Pi: `curl -I http://IP_DEL_PC:3000` deve rispondere `200`.
+Se la rete dell'ufficio isola i dispositivi tra loro, il Pi non può raggiungere il PC: serve un'altra rete.
+
+Altre note:
+- **SSH senza password dal PC dell'ufficio:** crea una chiave nuova su quel PC (sezione 2.3).
+  Non copiare la chiave privata da un PC all'altro.
 - Il repo è **pubblico**: mai committare password, token, URL iCal segreti (usare `.env`, già ignorato).
 
 ## Hardware
