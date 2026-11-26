@@ -108,10 +108,11 @@ const greeting = computed(() => {
 }
 .date::first-letter { text-transform: uppercase; }
 
+/* Meteo tutto su una riga: attuale + prossime ore */
 .weather {
   display: flex;
-  flex-direction: column;
-  gap: 14px;
+  align-items: center;
+  gap: 28px;
   padding-left: 48px;
   border-left: 2px solid rgba(255, 255, 255, 0.3);
 }
@@ -151,34 +152,25 @@ const greeting = computed(() => {
   opacity: 0.85;
 }
 
+/* Numeri secondari: piccoli, in colonna sotto il logo */
 .stats {
   list-style: none;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   justify-self: end;
-  width: min(100%, 620px);
-  margin-top: 36px; /* spazio per il logo sopra */
+  margin-top: 44px; /* spazio per il logo sopra */
 }
 .stats li {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 16px 20px;
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 10px;
 }
-.label { font-size: 0.95rem; font-weight: 700; opacity: 0.9; }
-.value { font-size: 2.5rem; font-weight: 900; line-height: 1.05; }
-.hint {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.95rem;
-  opacity: 0.85;
-}
+.label { font-size: 1rem; font-weight: 700; opacity: 0.85; }
+.value { font-size: 1.35rem; font-weight: 900; line-height: 1.1; min-width: 2ch; text-align: right; }
+.hint { display: none; }
 
 /* Logo originale (scritta e toggle bianchi, pallino viola) sulla fascia colorata */
 .logo {
