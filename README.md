@@ -316,6 +316,34 @@ Dashboard visibile a schermo intero, nessuna barra del traduttore.
 
 ---
 
+## Produzione sul Pi (app servita dal Pi stesso)
+
+Motivo: il dev server dal PC è lento sul Pi 3 (centinaia di moduli non ottimizzati) e richiede
+il PC acceso. La build di produzione è compatta e rende il Pi autonomo.
+
+- Node.js dal repository Debian: `sudo apt-get install -y nodejs` (v20.19).
+- `pi/deskpi-app.service` → server Nuxt in `/opt/deskpi` sulla porta 3000 (anche dalla rete).
+- Dati (note) in `/var/lib/deskpi` (`DESKPI_DATA_DIR`), fuori dalla build: sopravvivono ai deploy.
+- Il kiosk apre `http://localhost:3000/?kiosk`; lo script del browser aspetta che il server risponda.
+- Admin: `http://deskpi.local:3000/admin` (o `http://<ip-del-pi>:3000/admin`).
+
+**Deploy dal PC** (build + copia + riavvio, ~30 s):
+
+```powershell
+.\pi\deploy.ps1            # solo app
+.\pi\deploy.ps1 -System    # app + servizi/script/policy/URL (dopo modifiche in pi/)
+```
+
+La versione precedente resta in `/opt/deskpi.prev`. Rollback:
+`ssh deskpi "sudo rm -rf /opt/deskpi && sudo mv /opt/deskpi.prev /opt/deskpi && sudo systemctl restart deskpi-app"`
+
+**Sviluppo con hot reload sul monitor del Pi:** in `/etc/default/deskpi` usare l'URL del PC
+(vedi commento nel file), poi `sudo systemctl restart deskpi-kiosk`.
+
+Esito 2026-11-26: `deskpi-app` e `deskpi-kiosk` attivi; Node ~80 MB; 633 MB RAM disponibili.
+
+---
+
 ## Note sulle reti (casa → ufficio)
 
 Imager configura **una sola** rete Wi-Fi. Le altre si aggiungono con NetworkManager

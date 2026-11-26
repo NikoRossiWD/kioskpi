@@ -77,7 +77,7 @@ onMounted(() => run(load))
     <div class="brand-bar" aria-hidden="true" />
 
     <header>
-      <img src="/webison-logo.svg" alt="Webison" width="161" height="33" class="logo">
+      <img src="/webison-logo-dark.svg" alt="Webison" width="161" height="33" class="logo">
       <span class="title">DeskPi · Admin</span>
     </header>
 
@@ -160,8 +160,9 @@ header {
 .title { font-weight: 700; color: var(--muted); flex: 1; }
 
 .panel {
-  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  background: var(--surface);
   border: 1px solid var(--border);
+  box-shadow: var(--shadow);
   border-radius: var(--radius);
   padding: 24px;
   display: flex;
@@ -183,7 +184,7 @@ textarea {
   font: inherit;
   font-size: 1.05rem;
   color: var(--text);
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 12px 14px;
@@ -192,7 +193,7 @@ textarea {
 input:focus-visible,
 textarea:focus-visible,
 button:focus-visible {
-  outline: 2px solid var(--brand-tertiary);
+  outline: 2px solid var(--brand-primary);
   outline-offset: 2px;
 }
 
@@ -239,8 +240,8 @@ button:focus-visible {
   outline-offset: 3px;
 }
 .accent input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
-.accent:has(input:checked) { outline-color: #fff; }
-.accent:has(input:focus-visible) { outline-color: var(--brand-tertiary); }
+.accent:has(input:checked) { outline-color: var(--text); }
+.accent:has(input:focus-visible) { outline-color: var(--brand-primary); }
 .accent.primary { background: var(--brand-primary); }
 .accent.secondary { background: var(--brand-secondary); }
 .accent.tertiary { background: var(--brand-tertiary); }
@@ -258,7 +259,7 @@ button:focus-visible {
   gap: 10px;
   padding: 14px 16px;
   border-radius: 12px;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--surface-2);
   border-left: 4px solid var(--accent);
 }
 .list li.primary { --accent: var(--brand-primary); }
@@ -270,8 +271,8 @@ button:focus-visible {
 
 .muted { color: var(--muted); }
 .error {
-  color: #fff;
-  background: rgba(238, 37, 142, 0.18);
+  color: var(--text);
+  background: var(--brand-secondary-soft);
   border: 1px solid rgba(238, 37, 142, 0.5);
   border-radius: 12px;
   padding: 10px 14px;

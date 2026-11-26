@@ -4,29 +4,38 @@
 @import '@fontsource/red-hat-display/latin-900.css';
 
 /*
- * Brand Webison (riferimento: webison.it)
+ * Brand Webison (riferimento: webison.it) — tema chiaro
  *   primario   #4a2ed8  viola
  *   secondario #ee258e  magenta
  *   terziario  #ffeb5f  giallo
  *   gradiente hero: #ee7752 → #e73c7e → #4a2ed8 → #23d5ab
- * Base scura: schermo acceso tutto il giorno sulla scrivania → meno luce e meno abbagliamento.
+ *
+ * Prestazioni (Raspberry Pi 3): niente blur, niente backdrop-filter, niente background "fixed",
+ * ombre minime, nessuna animazione continua.
  */
 :root {
   --brand-primary: #4a2ed8;
+  --brand-primary-soft: #ece8fd;
   --brand-secondary: #ee258e;
+  --brand-secondary-soft: #fde6f2;
   --brand-tertiary: #ffeb5f;
+  --brand-tertiary-soft: #fff8cc;
+  --brand-teal: #23d5ab;
   --brand-gradient: linear-gradient(-45deg, #ee7752, #e73c7e, #4a2ed8, #23d5ab);
   --brand-gradient-violet: linear-gradient(135deg, #4a2ed8, #7d5cf5);
 
-  --bg: #0e0b1a;
-  --surface: #17132b;
-  --surface-2: #201a3d;
-  --border: rgba(255, 255, 255, 0.07);
-  --text: #ffffff;
-  --muted: rgba(255, 255, 255, 0.58);
+  --bg: #f4f1fb;
+  --surface: #ffffff;
+  --surface-2: #f9f7fd;
+  --border: #e9e4f5;
+  --text: #1e1e1e;
+  --muted: #6b6280;
+  --faint: #a29bb5;
 
   --gap: 24px;
-  --radius: 20px;
+  --radius: 24px;
+  --radius-sm: 14px;
+  --shadow: 0 1px 2px rgba(36, 28, 53, 0.06), 0 4px 14px rgba(36, 28, 53, 0.04);
 
   font-family: 'Red Hat Display', system-ui, sans-serif;
   color: var(--text);
@@ -39,28 +48,26 @@ html, body, #__nuxt {
   min-height: 100%;
 }
 
+body {
+  background: var(--bg);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
 /* Solo la dashboard (schermo fisso): altezza esatta e niente barre di scorrimento.
    La pagina /admin invece scorre normalmente. */
 body.screen,
 body.screen #__nuxt {
   height: 100%;
   overflow: hidden;
+  user-select: none;
 }
 html:has(body.screen) {
   height: 100%;
   overflow: hidden;
 }
 
-body {
-  background:
-    radial-gradient(1200px 600px at 100% 0%, rgba(74, 46, 216, 0.22), transparent 60%),
-    radial-gradient(900px 500px at 0% 100%, rgba(238, 37, 142, 0.12), transparent 60%),
-    var(--bg);
-  background-attachment: fixed;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-  user-select: none;
-}
-
-/* Sul Pi il cursore viene nascosto anche a livello di sistema (fase 4); questo è un doppio sicuro */
+/* Sul Pi il cursore viene nascosto anche a livello di sistema; questo è un doppio sicuro */
 body.kiosk { cursor: none; }
+
+.tabular { font-variant-numeric: tabular-nums; }

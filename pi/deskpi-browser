@@ -4,6 +4,15 @@
 
 URL="${DESKPI_URL:-about:blank}"
 
+# Aspetta che la pagina risponda (max ~2 minuti) prima di aprire Chromium:
+# all'accensione il server o il Wi-Fi possono essere ancora in avvio.
+i=0
+while [ $i -lt 60 ]; do
+  curl -s -o /dev/null --max-time 2 "$URL" && break
+  i=$((i + 1))
+  sleep 2
+done
+
 exec chromium \
   --kiosk "$URL" \
   --ozone-platform=wayland \

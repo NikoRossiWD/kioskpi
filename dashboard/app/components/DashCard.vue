@@ -2,49 +2,67 @@
 withDefaults(defineProps<{
   title: string
   /** colore del pallino accanto al titolo */
-  accent?: 'primary' | 'secondary' | 'tertiary'
+  accent?: 'primary' | 'secondary' | 'tertiary' | 'teal'
+  /** testo piccolo a destra del titolo (es. "3 di 6") */
+  meta?: string
 }>(), { accent: 'primary' })
 </script>
 
 <template>
   <article class="card">
-    <h2><span class="dot" :class="accent" />{{ title }}</h2>
+    <header>
+      <h2><span class="dot" :class="accent" />{{ title }}</h2>
+      <span v-if="meta" class="meta">{{ meta }}</span>
+    </header>
     <div class="body"><slot /></div>
   </article>
 </template>
 
 <style scoped>
 .card {
-  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 28px 32px;
+  box-shadow: var(--shadow);
+  padding: 26px 28px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
   min-height: 0;
   overflow: hidden;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 h2 {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 1rem;
+  gap: 10px;
+  font-size: 1.35rem;
   font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
+  letter-spacing: -0.01em;
 }
 
 .dot {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
 }
-.dot.primary { background: var(--brand-primary); box-shadow: 0 0 12px var(--brand-primary); }
-.dot.secondary { background: var(--brand-secondary); box-shadow: 0 0 12px var(--brand-secondary); }
-.dot.tertiary { background: var(--brand-tertiary); box-shadow: 0 0 12px var(--brand-tertiary); }
+.dot.primary { background: var(--brand-primary); }
+.dot.secondary { background: var(--brand-secondary); }
+.dot.tertiary { background: #e8c900; }
+.dot.teal { background: var(--brand-teal); }
+
+.meta {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--muted);
+}
 
 .body {
   flex: 1;
