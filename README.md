@@ -310,6 +310,9 @@ sudo journalctl -u deskpi-kiosk -f         # log in diretta
   `sudo systemctl disable --now deskpi-kiosk`
 
 Esito 2026-11-26: servizio `active`, cage + 11 processi Chromium, RAM usata 335 MB / 904 (568 disponibili).
+Dashboard visibile a schermo intero, nessuna barra del traduttore.
+
+**Fase 3 completata il 2026-11-26.**
 
 ---
 
