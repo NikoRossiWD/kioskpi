@@ -36,8 +36,19 @@
 * { box-sizing: border-box; margin: 0; }
 
 html, body, #__nuxt {
+  min-height: 100%;
+}
+
+/* Solo la dashboard (schermo fisso): altezza esatta e niente barre di scorrimento.
+   La pagina /admin invece scorre normalmente. */
+body.screen,
+body.screen #__nuxt {
   height: 100%;
-  overflow: hidden;      /* niente barre di scorrimento sullo schermo fisso */
+  overflow: hidden;
+}
+html:has(body.screen) {
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -45,6 +56,8 @@ body {
     radial-gradient(1200px 600px at 100% 0%, rgba(74, 46, 216, 0.22), transparent 60%),
     radial-gradient(900px 500px at 0% 100%, rgba(238, 37, 142, 0.12), transparent 60%),
     var(--bg);
+  background-attachment: fixed;
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   user-select: none;
 }

@@ -266,15 +266,33 @@ Una copia è anche sul Pi: `cat ~/WIFI-UFFICIO.md` (copiata con `scp WIFI-UFFICI
 ## Dashboard Nuxt (cartella `dashboard/`)
 
 Progetto Nuxt 4 minimale, scritto a mano (niente template), CSS semplice senza framework.
+Brand Webison (webison.it): font Red Hat Display (servito in locale con `@fontsource`),
+viola `#4a2ed8`, magenta `#ee258e`, giallo `#ffeb5f`, gradiente dell'hero.
 
 ```
 dashboard/
-├─ nuxt.config.ts            devtools disattivati, CSS globale, lang="it"
-├─ app/app.vue               layout: orologio in alto + griglia di 3 card
-├─ app/components/DashClock.vue   ora e data in italiano (Intl), aggiornata ogni secondo
-├─ app/components/DashCard.vue    contenitore riusabile per ogni widget
-└─ app/assets/css/main.css   tema scuro, niente scroll, cursore nascosto con ?kiosk
+├─ nuxt.config.ts                 devtools off, CSS globale, storage "db" su .data/db
+├─ app/pages/index.vue            /       → schermo del Pi: orologio + 3 card
+├─ app/pages/admin.vue            /admin  → gestione contenuti (anche da telefono)
+├─ app/components/DashClock.vue   ora e data in italiano, aggiornata ogni secondo
+├─ app/components/DashCard.vue    contenitore dei widget (pallino colore brand)
+├─ app/components/DashNotes.vue   note sulla dashboard, ricaricate ogni 15 s
+├─ app/assets/css/main.css        variabili brand, tema scuro, ?kiosk = cursore nascosto
+├─ public/webison-logo.svg        logo (da webison.it)
+├─ shared/types/note.ts           tipo Note condiviso tra pagine e API
+└─ server/
+   ├─ utils/notes.ts              lettura/scrittura note + validazione
+   └─ api/notes/                  GET / POST /api/notes, PUT / DELETE /api/notes/:id
 ```
+
+### Contenuti e admin
+
+- Le note sono salvate in `dashboard/.data/db/notes.json` (escluso da git): semplici e locali.
+- Gestione da `http://<ip>:3000/admin`: aggiungi, modifica, elimina, scegli il colore.
+- La dashboard rilegge le note ogni 15 secondi.
+- ⚠️ **Admin e API di scrittura non sono protetti**: chiunque sia sulla stessa rete può modificare
+  le note. Protezione prevista con **Firebase Auth** (il punto da toccare è la funzione `api()` in
+  `admin.vue` e un controllo del token nelle API `server/api/notes/*`).
 
 Comandi (dal PC, nella cartella `dashboard`):
 
