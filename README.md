@@ -253,6 +253,54 @@ da `.ssh\config` e la riga che termina con `deskpi` in `~/.ssh/authorized_keys` 
 
 ---
 
+## Fase 3 — Kiosk: cage + Chromium all'avvio
+
+**cage** è un compositor Wayland minimale: mostra una sola app a schermo intero (niente desktop,
+~10–20 MB di RAM). Chromium gira dentro cage in modalità `--kiosk`.
+
+### 3.1 Installazione
+
+```powershell
+ssh deskpi "sudo systemd-run --unit=deskpi-install --wait --collect --setenv=DEBIAN_FRONTEND=noninteractive apt-get install -y cage chromium fonts-noto-core"
+```
+
+Esito 2026-11-26: 190 pacchetti in ~10 min (cage 0.3.1, Chromium 156). Disco: 34% usato.
+
+### 3.2 File di configurazione (cartella `pi/` del repo)
+
+| File nel repo | Destinazione sul Pi | Ruolo |
+|---|---|---|
+| `pi/deskpi.env` | `/etc/default/deskpi` | **URL da mostrare** (`DESKPI_URL=...`) |
+| `pi/deskpi-browser` | `/usr/local/bin/deskpi-browser` | avvia Chromium in kiosk con le opzioni giuste |
+| `pi/deskpi-kiosk.service` | `/etc/systemd/system/deskpi-kiosk.service` | servizio: cage + Chromium su tty1, riavvio automatico dopo 5 s |
+
+Installazione (dalla cartella `pi/` sul PC):
+
+```powershell
+scp deskpi.env deskpi-browser deskpi-kiosk.service deskpi:/tmp/
+ssh deskpi "cd /tmp && sed -i 's/\r$//' deskpi.env deskpi-browser deskpi-kiosk.service && sudo install -m 644 deskpi.env /etc/default/deskpi && sudo install -m 755 deskpi-browser /usr/local/bin/deskpi-browser && sudo install -m 644 deskpi-kiosk.service /etc/systemd/system/deskpi-kiosk.service && sudo systemd-analyze verify /etc/systemd/system/deskpi-kiosk.service"
+ssh deskpi "sudo systemctl daemon-reload && sudo systemctl enable --now deskpi-kiosk"
+```
+
+(`sed` toglie eventuali fine riga Windows; `install` copia e imposta i permessi in un colpo solo.)
+
+### 3.3 Uso quotidiano
+
+```bash
+sudo nano /etc/default/deskpi              # cambiare URL (es. IP del PC in ufficio)
+sudo systemctl restart deskpi-kiosk        # applicare / ricaricare la pagina
+systemctl status deskpi-kiosk              # stato
+sudo journalctl -u deskpi-kiosk -f         # log in diretta
+```
+
+- Sul monitor: **Ctrl+Alt+F2** → console testuale; **Ctrl+Alt+F1** → di nuovo la dashboard.
+- **Ripristino** (torna il login testuale sul monitor):
+  `sudo systemctl disable --now deskpi-kiosk`
+
+Esito 2026-11-26: servizio `active`, cage + 11 processi Chromium, RAM usata 335 MB / 904 (568 disponibili).
+
+---
+
 ## Note sulle reti (casa → ufficio)
 
 Imager configura **una sola** rete Wi-Fi. Le altre si aggiungono con NetworkManager

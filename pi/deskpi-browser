@@ -1,0 +1,17 @@
+#!/bin/sh
+# /usr/local/bin/deskpi-browser — avvia Chromium a schermo intero dentro cage.
+# Lanciato dal servizio deskpi-kiosk.service; l'URL arriva da /etc/default/deskpi.
+
+URL="${DESKPI_URL:-about:blank}"
+
+exec chromium \
+  --kiosk "$URL" \
+  --ozone-platform=wayland \
+  --noerrdialogs \
+  --disable-infobars \
+  --no-first-run \
+  --disable-session-crashed-bubble \
+  --disable-features=Translate,MediaRouter \
+  --check-for-update-interval=31536000 \
+  --password-store=basic \
+  --disk-cache-dir=/tmp/deskpi-chromium-cache
