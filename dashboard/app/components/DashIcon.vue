@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Piccolo set di icone a tratto (SVG inline: niente librerie, niente richieste extra).
 defineProps<{
-  name: 'sun' | 'moon' | 'cloud' | 'fog' | 'rain' | 'snow' | 'storm' | 'partly' | 'video' | 'check' | 'arrow-up' | 'drop' | 'music' | 'car' | 'globe'
+  name: 'sun' | 'moon' | 'cloud' | 'fog' | 'rain' | 'snow' | 'storm' | 'partly' | 'video' | 'check' | 'arrow-up' | 'drop' | 'music' | 'car'
   size?: number
 }>()
 </script>
@@ -52,10 +52,6 @@ defineProps<{
       <path d="M3 16h18v3H3z" />
       <circle cx="7.5" cy="13.5" r="1" />
       <circle cx="16.5" cy="13.5" r="1" />
-    </template>
-    <template v-else-if="name === 'globe'">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
     </template>
   </svg>
 </template>

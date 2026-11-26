@@ -37,7 +37,7 @@ const raining = computed(() => (weather.value?.icon === 'rain' || weather.value?
 </script>
 
 <template>
-  <DashCard title="Ritorno a casa" accent="primary" meta="in auto, senza traffico">
+  <DashCard title="Ritorno a casa" accent="primary" meta="senza traffico">
     <ul class="places">
       <li v-for="p in places" :key="p.id">
         <DashIcon name="car" :size="22" class="car" />
@@ -48,8 +48,8 @@ const raining = computed(() => (weather.value?.icon === 'rain' || weather.value?
     <p class="tip" :class="{ wet: raining || rain }">
       <DashIcon name="drop" :size="16" />
       <template v-if="raining">Sta piovendo: guida con calma</template>
-      <template v-else-if="rain">Pioggia probabile dalle {{ rain.time }}: meglio uscire prima</template>
-      <template v-else>Niente pioggia nelle prossime ore</template>
+      <template v-else-if="rain">Pioggia dalle {{ rain.time }}: esci prima</template>
+      <template v-else>Niente pioggia in arrivo</template>
     </p>
   </DashCard>
 </template>

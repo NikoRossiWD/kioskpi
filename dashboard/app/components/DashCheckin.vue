@@ -11,19 +11,19 @@ const svg = renderSVG(url, { border: 1, blackColor: '#1e1e1e', whiteColor: '#fff
 <template>
   <article class="checkin">
     <div class="qr" v-html="svg" />
-    <div class="text">
-      <p class="title">Check-in</p>
-      <p class="sub">Inquadra con il telefono quando arrivi</p>
-    </div>
+    <p class="title">Check-in</p>
   </article>
 </template>
 
 <style scoped>
+/* Compatto e verticale: sta accanto a "Ritorno a casa" */
 .checkin {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 20px;
-  padding: 18px 22px;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 18px;
   border-radius: var(--radius);
   background: var(--surface);
   border: 1px solid var(--border);
@@ -46,13 +46,7 @@ const svg = renderSVG(url, { border: 1, blackColor: '#1e1e1e', whiteColor: '#fff
 }
 
 .title {
-  font-size: 1.35rem;
+  font-size: 1rem;
   font-weight: 900;
-}
-.sub {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--muted);
-  line-height: 1.25;
 }
 </style>

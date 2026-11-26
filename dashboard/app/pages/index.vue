@@ -12,19 +12,19 @@ useHead({
     <DashHero />
 
     <div class="grid">
-      <div class="col">
-        <DashFocus class="grow" />
-        <DashSites />
-      </div>
+      <DashFocus />
       <div class="col">
         <DashAgenda />
         <DashProjects class="grow" />
-        <DashCommute />
       </div>
       <div class="col">
         <DashDeadlines />
         <DashNotes class="grow" />
-        <DashCheckin />
+        <!-- In fondo a destra: ritorno a casa + QR check-in, affiancati -->
+        <div class="pair">
+          <DashCommute />
+          <DashCheckin />
+        </div>
       </div>
     </div>
   </main>
@@ -53,4 +53,10 @@ useHead({
   min-height: 0;
 }
 .grow { flex: 1; }
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--gap);
+}
 </style>

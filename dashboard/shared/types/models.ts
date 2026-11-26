@@ -35,13 +35,6 @@ export interface ProjectDoc {
   color: Accent
 }
 
-/** sites — siti dei clienti da monitorare (semaforo) */
-export interface SiteDoc {
-  order: number
-  name: string
-  url: string
-}
-
 /** commute — destinazioni per "Ritorno a casa" (partenza: ufficio, in nuxt.config) */
 export interface CommuteDoc {
   order: number

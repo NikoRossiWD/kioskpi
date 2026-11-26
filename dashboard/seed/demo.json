@@ -1,57 +1,176 @@
 {
   "_info": "Dati DEMO (inventati) caricati negli emulatori con: npm run seed. Orari 'HH:MM' = oggi; 'dueInDays' = giorni da oggi. Lo script li converte in date vere.",
-
   "events": [
-    { "start": "09:00", "minutes": 30, "title": "Stand-up team", "detail": "Priorità della settimana", "kind": "interno", "online": true },
-    { "start": "10:30", "minutes": 60, "title": "Kickoff e-commerce", "detail": "Rossi Arredamenti", "kind": "cliente", "online": true },
-    { "start": "13:00", "minutes": 60, "title": "Pausa pranzo", "kind": "personale" },
-    { "start": "14:30", "minutes": 45, "title": "Review design homepage", "detail": "Officine Verdi", "kind": "interno" },
-    { "start": "16:00", "minutes": 60, "title": "Demo chatbot AI", "detail": "Studio Bianchi", "kind": "cliente", "online": true },
-    { "start": "18:30", "minutes": 60, "title": "Palestra", "kind": "personale" }
+    {
+      "start": "09:00",
+      "minutes": 30,
+      "title": "Stand-up team",
+      "detail": "Priorità della settimana",
+      "kind": "interno",
+      "online": true
+    },
+    {
+      "start": "10:30",
+      "minutes": 60,
+      "title": "Kickoff e-commerce",
+      "detail": "Rossi Arredamenti",
+      "kind": "cliente",
+      "online": true
+    },
+    {
+      "start": "13:00",
+      "minutes": 60,
+      "title": "Pausa pranzo",
+      "kind": "personale"
+    },
+    {
+      "start": "14:30",
+      "minutes": 45,
+      "title": "Review design homepage",
+      "detail": "Officine Verdi",
+      "kind": "interno"
+    },
+    {
+      "start": "16:00",
+      "minutes": 60,
+      "title": "Demo chatbot AI",
+      "detail": "Studio Bianchi",
+      "kind": "cliente",
+      "online": true
+    },
+    {
+      "start": "18:30",
+      "minutes": 60,
+      "title": "Palestra",
+      "kind": "personale"
+    }
   ],
-
   "focus": [
-    { "order": 1, "text": "Consegnare mockup homepage a Rossi Arredamenti", "done": true },
-    { "order": 2, "text": "Preventivo web app gestionale per Officine Verdi", "done": false },
-    { "order": 3, "text": "Sistemare risposte del chatbot su orari e prezzi", "done": false },
-    { "order": 4, "text": "Rispondere alla mail di FitZone sui testi della landing", "done": false },
-    { "order": 5, "text": "Caricare le foto prodotto nell'e-commerce", "done": false },
-    { "order": 6, "text": "Aggiornare plugin e backup del sito Officine Verdi", "done": true },
-    { "order": 7, "text": "Bozza post LinkedIn sul caso studio chatbot", "done": false }
+    {
+      "order": 1,
+      "text": "Consegnare mockup homepage a Rossi Arredamenti",
+      "done": true
+    },
+    {
+      "order": 2,
+      "text": "Preventivo web app gestionale per Officine Verdi",
+      "done": false
+    },
+    {
+      "order": 3,
+      "text": "Sistemare risposte del chatbot su orari e prezzi",
+      "done": false
+    },
+    {
+      "order": 4,
+      "text": "Rispondere alla mail di FitZone sui testi della landing",
+      "done": false
+    },
+    {
+      "order": 5,
+      "text": "Caricare le foto prodotto nell'e-commerce",
+      "done": false
+    },
+    {
+      "order": 6,
+      "text": "Aggiornare plugin e backup del sito Officine Verdi",
+      "done": true
+    },
+    {
+      "order": 7,
+      "text": "Bozza post LinkedIn sul caso studio chatbot",
+      "done": false
+    }
   ],
-
   "projects": [
-    { "order": 1, "name": "E-commerce", "client": "Rossi Arredamenti", "phase": "Sviluppo", "progress": 72, "dueInDays": 12, "color": "primary" },
-    { "order": 2, "name": "Chatbot AI", "client": "Studio Bianchi", "phase": "Training", "progress": 45, "dueInDays": 20, "color": "secondary" },
-    { "order": 3, "name": "Restyling sito", "client": "Officine Verdi", "phase": "Design", "progress": 20, "dueInDays": 34, "color": "teal" },
-    { "order": 4, "name": "Landing lead gen", "client": "FitZone", "phase": "Test finali", "progress": 90, "dueInDays": 3, "color": "tertiary" }
+    {
+      "order": 1,
+      "name": "E-commerce",
+      "client": "Rossi Arredamenti",
+      "phase": "Sviluppo",
+      "progress": 72,
+      "dueInDays": 12,
+      "color": "primary"
+    },
+    {
+      "order": 2,
+      "name": "Chatbot AI",
+      "client": "Studio Bianchi",
+      "phase": "Training",
+      "progress": 45,
+      "dueInDays": 20,
+      "color": "secondary"
+    },
+    {
+      "order": 3,
+      "name": "Restyling sito",
+      "client": "Officine Verdi",
+      "phase": "Design",
+      "progress": 20,
+      "dueInDays": 34,
+      "color": "teal"
+    },
+    {
+      "order": 4,
+      "name": "Landing lead gen",
+      "client": "FitZone",
+      "phase": "Test finali",
+      "progress": 90,
+      "dueInDays": 3,
+      "color": "tertiary"
+    }
   ],
-
-  "sites": [
-    { "order": 1, "name": "Webison", "url": "https://www.webison.it" },
-    { "order": 2, "name": "Rossi Arredamenti (demo)", "url": "https://example.com" },
-    { "order": 3, "name": "Studio Bianchi (demo)", "url": "https://example.org" },
-    { "order": 4, "name": "FitZone (demo offline)", "url": "https://fitzone.invalid" }
-  ],
-
   "commute": [
-    { "order": 1, "label": "Lesmo", "lat": 45.6474, "lon": 9.3077 },
-    { "order": 2, "label": "Lissone", "lat": 45.6131, "lon": 9.2440 }
+    {
+      "order": 1,
+      "label": "Lesmo",
+      "lat": 45.6474,
+      "lon": 9.3077
+    },
+    {
+      "order": 2,
+      "label": "Lissone",
+      "lat": 45.6131,
+      "lon": 9.244
+    }
   ],
-
   "music": [
-    { "title": "Midnight City", "artist": "M83", "playing": true }
+    {
+      "title": "Midnight City",
+      "artist": "M83",
+      "playing": true
+    }
   ],
-
   "deadlines": [
-    { "text": "Fattura acconto Studio Bianchi", "dueInDays": 1, "kind": "fattura" },
-    { "text": "Rinnovo dominio fitzone.it", "dueInDays": 4, "kind": "tecnico" },
-    { "text": "Feedback wireframe Officine Verdi", "dueInDays": 6, "kind": "cliente" },
-    { "text": "Versamento F24", "dueInDays": 9, "kind": "fisco" }
+    {
+      "text": "Fattura acconto Studio Bianchi",
+      "dueInDays": 1,
+      "kind": "fattura"
+    },
+    {
+      "text": "Rinnovo dominio fitzone.it",
+      "dueInDays": 4,
+      "kind": "tecnico"
+    },
+    {
+      "text": "Feedback wireframe Officine Verdi",
+      "dueInDays": 6,
+      "kind": "cliente"
+    },
+    {
+      "text": "Versamento F24",
+      "dueInDays": 9,
+      "kind": "fisco"
+    }
   ],
-
   "notes": [
-    { "text": "Ricordarsi di rinnovare il certificato SSL del cliente FitZone", "accent": "secondary" },
-    { "text": "Idea: newsletter mensile con i casi studio", "accent": "primary" }
+    {
+      "text": "Ricordarsi di rinnovare il certificato SSL del cliente FitZone",
+      "accent": "secondary"
+    },
+    {
+      "text": "Idea: newsletter mensile con i casi studio",
+      "accent": "primary"
+    }
   ]
 }
