@@ -18,6 +18,8 @@ export default defineNuxtConfig({
         appId: 'demo-app',
       },
       useEmulators: true,
+      // Città del meteo (Open-Meteo). Coordinate: https://open-meteo.com/en/docs/geocoding-api
+      weather: { city: 'Milano', latitude: 45.4642, longitude: 9.19 },
     },
   },
 

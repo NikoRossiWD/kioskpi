@@ -1,6 +1,9 @@
 <script setup lang="ts">
 // Piccolo set di icone a tratto (SVG inline: niente librerie, niente richieste extra).
-defineProps<{ name: 'sun' | 'cloud' | 'rain' | 'partly' | 'video' | 'check' | 'arrow-up' | 'drop', size?: number }>()
+defineProps<{
+  name: 'sun' | 'moon' | 'cloud' | 'fog' | 'rain' | 'snow' | 'storm' | 'partly' | 'video' | 'check' | 'arrow-up' | 'drop'
+  size?: number
+}>()
 </script>
 
 <template>
@@ -12,7 +15,17 @@ defineProps<{ name: 'sun' | 'cloud' | 'rain' | 'partly' | 'video' | 'check' | 'a
       <circle cx="12" cy="12" r="4" />
       <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
     </template>
+    <path v-else-if="name === 'moon'" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
     <path v-else-if="name === 'cloud'" d="M7 18h10a4 4 0 0 0 .5-8 6 6 0 0 0-11.5 1.5A3.5 3.5 0 0 0 7 18z" />
+    <path v-else-if="name === 'fog'" d="M4 9h16M3 13h18M5 17h14" />
+    <template v-else-if="name === 'snow'">
+      <path d="M7 14h10a4 4 0 0 0 .5-8 6 6 0 0 0-11.5 1.5A3.5 3.5 0 0 0 7 14z" />
+      <path d="M8 18h.01M12 20h.01M16 18h.01M10 22h.01M14 22h.01" />
+    </template>
+    <template v-else-if="name === 'storm'">
+      <path d="M7 14h10a4 4 0 0 0 .5-8 6 6 0 0 0-11.5 1.5A3.5 3.5 0 0 0 7 14z" />
+      <path d="M13 14l-3 4h4l-3 4" />
+    </template>
     <template v-else-if="name === 'rain'">
       <path d="M7 15h10a4 4 0 0 0 .5-8 6 6 0 0 0-11.5 1.5A3.5 3.5 0 0 0 7 15z" />
       <path d="M8 19l-1 2M12 19l-1 2M16 19l-1 2" />

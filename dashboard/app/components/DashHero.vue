@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { weather } from '~/data/weather'
 import type { StatDoc } from '#shared/types/models'
+
+const { weather } = useWeather()
 
 const now = useNow()
 const { items: stats } = useCollection<StatDoc>('stats', 'order')
@@ -25,7 +26,14 @@ const greeting = computed(() => {
       <p class="date">{{ dateFmt.format(now) }}</p>
     </div>
 
-    <div class="weather">
+    <div v-if="!weather" class="weather">
+      <DashIcon name="cloud" :size="56" />
+      <div>
+        <p class="temp">--°</p>
+        <p class="cond">Meteo in caricamento…</p>
+      </div>
+    </div>
+    <div v-else class="weather">
       <DashIcon :name="weather.icon" :size="56" />
       <div>
         <p class="temp tabular">{{ weather.temp }}°</p>

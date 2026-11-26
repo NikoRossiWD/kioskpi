@@ -403,10 +403,20 @@ dashboard/
 ├─ app/composables/useNow.ts        ora condivisa, aggiornata ogni minuto
 ├─ app/pages/index.vue              /       → schermo del Pi
 ├─ app/pages/admin.vue              /admin  → login + note + focus (anche da telefono)
-├─ app/components/Dash*.vue         Hero (ora, meteo, numeri), Agenda, Focus, Progetti, Scadenze, Note
-├─ app/data/weather.ts              meteo demo statico (poi API Open-Meteo)
+├─ app/pages/checkin.vue            /checkin → "Bentornato in ufficio" (aperta dal QR)
+├─ app/components/Dash*.vue         Hero (ora, meteo, numeri), Agenda, Focus, Progetti, Scadenze, Note, Check-in (QR)
+├─ app/composables/useWeather.ts    meteo reale da Open-Meteo (gratis, senza chiave), ogni 15 min
 └─ public/webison-logo*.svg         logo originale (su fondo colorato) e variante per fondo chiaro
 ```
+
+### Meteo e check-in
+
+- **Meteo:** [Open-Meteo](https://open-meteo.com), gratuito, nessuna chiave, chiamato dal browser.
+  Città in `nuxt.config.ts` → `runtimeConfig.public.weather` (nome + latitudine/longitudine).
+  Se la rete cade resta l'ultimo dato valido.
+- **QR check-in** (in basso a destra): codifica `<indirizzo della dashboard>/checkin`. Sul Pi è
+  l'IP del PC (raggiungibile dai telefoni sulla stessa rete); aprendo la dashboard da `localhost`
+  il QR punta a `localhost` e dal telefono non funziona. Generato in locale con `uqr` (nessun servizio esterno).
 
 ### Dati (Firestore)
 

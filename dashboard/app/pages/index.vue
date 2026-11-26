@@ -20,6 +20,7 @@ useHead({
       <div class="col">
         <DashDeadlines />
         <DashNotes class="grow" />
+        <DashCheckin />
       </div>
     </div>
   </main>
