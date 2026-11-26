@@ -13,7 +13,11 @@
   "focus": [
     { "order": 1, "text": "Consegnare mockup homepage a Rossi Arredamenti", "done": true },
     { "order": 2, "text": "Preventivo web app gestionale per Officine Verdi", "done": false },
-    { "order": 3, "text": "Sistemare risposte del chatbot su orari e prezzi", "done": false }
+    { "order": 3, "text": "Sistemare risposte del chatbot su orari e prezzi", "done": false },
+    { "order": 4, "text": "Rispondere alla mail di FitZone sui testi della landing", "done": false },
+    { "order": 5, "text": "Caricare le foto prodotto nell'e-commerce", "done": false },
+    { "order": 6, "text": "Aggiornare plugin e backup del sito Officine Verdi", "done": true },
+    { "order": 7, "text": "Bozza post LinkedIn sul caso studio chatbot", "done": false }
   ],
 
   "projects": [

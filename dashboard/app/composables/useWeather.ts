@@ -6,7 +6,15 @@
 
 export type WeatherIcon = 'sun' | 'moon' | 'partly' | 'cloud' | 'fog' | 'rain' | 'snow' | 'storm'
 
+export interface HourForecast {
+  time: string // "HH:00"
+  temp: number
+  rainChance: number
+  icon: WeatherIcon
+}
+
 export interface Weather {
+  hours: HourForecast[] // prossime 6 ore
   city: string
   temp: number
   min: number
@@ -34,6 +42,7 @@ function describe(code: number, isDay: boolean): { condition: string, icon: Weat
 
 interface OpenMeteoResponse {
   current: { temperature_2m: number, weather_code: number, is_day: number }
+  hourly: { time: string[], temperature_2m: number[], precipitation_probability: number[], weather_code: number[], is_day: number[] }
   daily: { temperature_2m_max: number[], temperature_2m_min: number[], precipitation_probability_max: number[] }
 }
 
@@ -49,12 +58,23 @@ export function useWeather() {
           latitude,
           longitude,
           current: 'temperature_2m,weather_code,is_day',
+          // forecast_hours parte dall'ora corrente: 7 = ora attuale + le 6 successive
+          hourly: 'temperature_2m,precipitation_probability,weather_code,is_day',
+          forecast_hours: 7,
           daily: 'temperature_2m_max,temperature_2m_min,precipitation_probability_max',
           timezone: 'Europe/Rome',
           forecast_days: 1,
         },
       })
+      const h = r.hourly
+      const hours = h.time.slice(1).map((t, i) => ({
+        time: t.slice(11, 16),
+        temp: Math.round(h.temperature_2m[i + 1]!),
+        rainChance: h.precipitation_probability[i + 1] ?? 0,
+        icon: describe(h.weather_code[i + 1]!, h.is_day[i + 1] === 1).icon,
+      }))
       weather.value = {
+        hours,
         city,
         temp: Math.round(r.current.temperature_2m),
         min: Math.round(r.daily.temperature_2m_min[0]!),

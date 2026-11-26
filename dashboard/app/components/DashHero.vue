@@ -26,23 +26,36 @@ const greeting = computed(() => {
       <p class="date">{{ dateFmt.format(now) }}</p>
     </div>
 
-    <div v-if="!weather" class="weather">
-      <DashIcon name="cloud" :size="56" />
-      <div>
-        <p class="temp">--°</p>
-        <p class="cond">Meteo in caricamento…</p>
+    <div class="weather">
+      <div v-if="!weather" class="now">
+        <DashIcon name="cloud" :size="56" />
+        <div>
+          <p class="temp">--°</p>
+          <p class="cond">Meteo in caricamento…</p>
+        </div>
       </div>
-    </div>
-    <div v-else class="weather">
-      <DashIcon :name="weather.icon" :size="56" />
-      <div>
-        <p class="temp tabular">{{ weather.temp }}°</p>
-        <p class="cond">{{ weather.condition }}</p>
-        <p class="sub tabular">
-          {{ weather.city }} · {{ weather.min }}° / {{ weather.max }}° ·
-          <DashIcon name="drop" :size="16" /> {{ weather.rainChance }}%
-        </p>
-      </div>
+      <template v-else>
+        <div class="now">
+          <DashIcon :name="weather.icon" :size="56" />
+          <div>
+            <p class="temp tabular">{{ weather.temp }}°</p>
+            <p class="cond">{{ weather.condition }}</p>
+            <p class="sub tabular">
+              {{ weather.city }} · {{ weather.min }}° / {{ weather.max }}° ·
+              <DashIcon name="drop" :size="16" /> {{ weather.rainChance }}%
+            </p>
+          </div>
+        </div>
+        <!-- Prossime 6 ore -->
+        <ol class="hours">
+          <li v-for="h in weather.hours" :key="h.time" :class="{ wet: h.rainChance >= 50 }">
+            <span class="h-time tabular">{{ h.time }}</span>
+            <DashIcon :name="h.icon" :size="26" />
+            <span class="h-temp tabular">{{ h.temp }}°</span>
+            <span class="h-rain tabular">{{ h.rainChance }}%</span>
+          </li>
+        </ol>
+      </template>
     </div>
 
     <ul class="stats">
@@ -97,11 +110,37 @@ const greeting = computed(() => {
 
 .weather {
   display: flex;
-  align-items: center;
-  gap: 18px;
+  flex-direction: column;
+  gap: 14px;
   padding-left: 48px;
   border-left: 2px solid rgba(255, 255, 255, 0.3);
 }
+.now {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.hours {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 6px;
+}
+.hours li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 58px;
+  padding: 8px 4px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+}
+.hours li.wet { background: rgba(255, 255, 255, 0.24); }
+.h-time { font-size: 0.9rem; font-weight: 700; opacity: 0.85; }
+.h-temp { font-size: 1.15rem; font-weight: 900; }
+.h-rain { font-size: 0.8rem; font-weight: 700; opacity: 0.85; }
 .temp { font-size: 3.4rem; font-weight: 900; line-height: 1; }
 .cond { font-size: 1.25rem; font-weight: 700; }
 .sub {

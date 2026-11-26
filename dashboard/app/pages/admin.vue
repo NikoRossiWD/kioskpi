@@ -6,7 +6,7 @@ import { NOTE_ACCENTS, NOTE_MAX_LENGTH, type FocusDoc, type NoteAccent, type Not
 // Pannello per gestire i contenuti della dashboard. Pensato anche per il telefono.
 // Le scritture richiedono il login (regole Firestore). In locale l'emulatore Auth
 // mostra un account di prova: nessun account Google reale.
-useHead({ title: 'DeskPi · Admin' })
+useHead({ title: 'DeskPi Â· Admin' })
 
 const { $db, $auth } = useNuxtApp()
 
@@ -79,7 +79,7 @@ const toggleFocus = (f: WithId<FocusDoc>) => run(() => updateDoc(doc($db, 'focus
 
     <header>
       <img src="/webison-logo-dark.svg" alt="Webison" width="161" height="33" class="logo">
-      <span class="title">DeskPi · Admin</span>
+      <span class="title">DeskPi Â· Admin</span>
       <button v-if="user" class="link" @click="logout">Esci</button>
     </header>
 
@@ -95,7 +95,7 @@ const toggleFocus = (f: WithId<FocusDoc>) => run(() => updateDoc(doc($db, 'focus
       <p class="muted small">Connesso come {{ user.email || user.displayName }}</p>
 
       <section class="panel">
-        <h2>Focus di oggi</h2>
+        <h2>To-do di oggi</h2>
         <ul class="focus">
           <li v-for="f in focus" :key="f.id">
             <label>
@@ -109,7 +109,7 @@ const toggleFocus = (f: WithId<FocusDoc>) => run(() => updateDoc(doc($db, 'focus
       <section class="panel">
         <h2>Nuova nota</h2>
         <form class="note-form" @submit.prevent="addNote">
-          <textarea v-model="draft.text" rows="3" :maxlength="NOTE_MAX_LENGTH" placeholder="Scrivi una nota…" />
+          <textarea v-model="draft.text" rows="3" :maxlength="NOTE_MAX_LENGTH" placeholder="Scrivi una notaâ€¦" />
           <div class="row">
             <div class="accents" role="radiogroup" aria-label="Colore">
               <label v-for="a in NOTE_ACCENTS" :key="a" class="accent" :class="a" :title="accentLabel[a]">

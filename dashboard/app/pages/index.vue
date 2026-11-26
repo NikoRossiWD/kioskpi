@@ -12,9 +12,9 @@ useHead({
     <DashHero />
 
     <div class="grid">
-      <DashAgenda />
+      <DashFocus />
       <div class="col">
-        <DashFocus />
+        <DashAgenda />
         <DashProjects class="grow" />
       </div>
       <div class="col">
@@ -37,7 +37,7 @@ useHead({
 
 .grid {
   display: grid;
-  grid-template-columns: 1.1fr 1.25fr 1fr;
+  grid-template-columns: 1.15fr 1.2fr 1fr;
   gap: var(--gap);
   min-height: 0;
 }
