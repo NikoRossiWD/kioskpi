@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import type { Note } from '#shared/types/note'
+import type { NoteDoc } from '#shared/types/models'
 
-// Note vere (dall'admin). Ricarica ogni 15 secondi:
-// una modifica fatta da /admin compare sullo schermo entro pochi secondi.
-const { data: notes, refresh } = await useFetch<Note[]>('/api/notes', { default: () => [] })
-
-let timer: ReturnType<typeof setInterval> | undefined
-onMounted(() => { timer = setInterval(() => refresh(), 15_000) })
-onBeforeUnmount(() => clearInterval(timer))
+// Note da Firestore in tempo reale: una modifica da /admin compare subito sullo schermo.
+const { items } = useCollection<NoteDoc>('notes')
+const notes = computed(() =>
+  [...items.value].sort((a, b) => (b.updatedAt?.toMillis() ?? Date.now()) - (a.updatedAt?.toMillis() ?? Date.now())),
+)
 </script>
 
 <template>

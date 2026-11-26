@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { stats, weather } from '~/data/demo'
+import { weather } from '~/data/weather'
+import type { StatDoc } from '#shared/types/models'
 
 const now = useNow()
+const { items: stats } = useCollection<StatDoc>('stats', 'order')
 
 const timeFmt = new Intl.DateTimeFormat('it-IT', { hour: '2-digit', minute: '2-digit' })
 const dateFmt = new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })
@@ -36,7 +38,7 @@ const greeting = computed(() => {
     </div>
 
     <ul class="stats">
-      <li v-for="s in stats" :key="s.label">
+      <li v-for="s in stats" :key="s.id">
         <span class="label">{{ s.label }}</span>
         <span class="value tabular">{{ s.value }}</span>
         <span v-if="s.hint" class="hint">

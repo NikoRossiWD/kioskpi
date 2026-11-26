@@ -1,21 +1,29 @@
 <script setup lang="ts">
-import { deadlines } from '~/data/demo'
+import type { DeadlineDoc } from '#shared/types/models'
 
 const kindLabel = { fattura: 'Fattura', fisco: 'Fisco', tecnico: 'Tecnico', cliente: 'Cliente' } as const
 
+const now = useNow()
+const { items } = useCollection<DeadlineDoc>('deadlines', 'due')
+// Solo da oggi in poi, al massimo 5
+const deadlines = computed(() =>
+  items.value
+    .map(d => ({ ...d, inDays: daysUntil(d.due, now.value) }))
+    .filter(d => d.inDays >= 0)
+    .slice(0, 5),
+)
+
 function when(days: number) {
-  if (days <= 0) return 'Oggi'
+  if (days === 0) return 'Oggi'
   if (days === 1) return 'Domani'
   return `${days} gg`
 }
-
-const sorted = [...deadlines].sort((a, b) => a.inDays - b.inDays)
 </script>
 
 <template>
   <DashCard title="Scadenze" accent="tertiary">
     <ul class="deadlines">
-      <li v-for="d in sorted" :key="d.text">
+      <li v-for="d in deadlines" :key="d.id">
         <span class="when tabular" :class="{ urgent: d.inDays <= 2 }">{{ when(d.inDays) }}</span>
         <span class="text">
           {{ d.text }}

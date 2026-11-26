@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { focus } from '~/data/demo'
+import type { FocusDoc } from '#shared/types/models'
 
-const done = computed(() => focus.filter(f => f.done).length)
+const { items: focus } = useCollection<FocusDoc>('focus', 'order')
+const done = computed(() => focus.value.filter(f => f.done).length)
 </script>
 
 <template>
   <DashCard title="Focus di oggi" accent="secondary" :meta="`${done} di ${focus.length}`">
     <ol class="focus">
-      <li v-for="(f, i) in focus" :key="f.text" :class="{ done: f.done }">
+      <li v-for="(f, i) in focus" :key="f.id" :class="{ done: f.done }">
         <span class="check">
           <DashIcon v-if="f.done" name="check" :size="18" />
           <template v-else>{{ i + 1 }}</template>

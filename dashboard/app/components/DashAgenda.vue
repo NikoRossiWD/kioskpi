@@ -1,52 +1,53 @@
 <script setup lang="ts">
-import { agenda, type AgendaEvent } from '~/data/demo'
+import type { EventDoc } from '#shared/types/models'
 
+// Eventi da Firestore (collezione "events"); in futuro arriveranno da Google Calendar.
 const now = useNow()
-
-function at(hhmm: string, base: Date) {
-  const [h, m] = hhmm.split(':').map(Number)
-  const d = new Date(base)
-  d.setHours(h!, m!, 0, 0)
-  return d
-}
-
-const timeFmt = new Intl.DateTimeFormat('it-IT', { hour: '2-digit', minute: '2-digit' })
+const { items: events } = useCollection<EventDoc>('events', 'start')
 
 type Status = 'past' | 'now' | 'next' | 'later'
 
 const items = computed(() => {
   const t = now.value.getTime()
+  const today = now.value.toDateString()
   let nextFound = false
-  return agenda.map((e: AgendaEvent) => {
-    const start = at(e.start, now.value)
-    const end = new Date(start.getTime() + e.minutes * 60_000)
-    let status: Status = 'later'
-    let badge = ''
-    if (end.getTime() <= t) status = 'past'
-    else if (start.getTime() <= t) {
-      status = 'now'
-      badge = `In corso · fino alle ${timeFmt.format(end)}`
-    }
-    else if (!nextFound) {
-      status = 'next'
-      nextFound = true
-      const mins = Math.round((start.getTime() - t) / 60_000)
-      badge = mins < 60 ? `Tra ${mins} min` : `Tra ${Math.floor(mins / 60)} h ${mins % 60 ? `${mins % 60} min` : ''}`.trim()
-    }
-    return { ...e, end: timeFmt.format(end), status, badge }
-  })
+
+  return events.value
+    .filter(e => e.start.toDate().toDateString() === today)
+    .map((e) => {
+      const start = e.start.toDate()
+      const end = e.end.toDate()
+      let status: Status = 'later'
+      let badge = ''
+      if (end.getTime() <= t) status = 'past'
+      else if (start.getTime() <= t) {
+        status = 'now'
+        badge = `In corso · fino alle ${timeFmt.format(end)}`
+      }
+      else if (!nextFound) {
+        status = 'next'
+        nextFound = true
+        const mins = Math.round((start.getTime() - t) / 60_000)
+        badge = mins < 60 ? `Tra ${mins} min` : `Tra ${Math.floor(mins / 60)} h ${mins % 60 ? `${mins % 60} min` : ''}`.trim()
+      }
+      return { ...e, startLabel: timeFmt.format(start), endLabel: timeFmt.format(end), status, badge }
+    })
 })
 
 const remaining = computed(() => items.value.filter(i => i.status !== 'past').length)
+const meta = computed(() => {
+  if (!items.value.length) return 'Nessun evento'
+  return remaining.value ? `${remaining.value} da fare` : 'Giornata finita'
+})
 </script>
 
 <template>
-  <DashCard title="Agenda di oggi" accent="primary" :meta="remaining ? `${remaining} da fare` : 'Giornata finita'">
+  <DashCard title="Agenda di oggi" accent="primary" :meta="meta">
     <ol class="events">
-      <li v-for="e in items" :key="e.start + e.title" :class="[e.status, e.kind]">
+      <li v-for="e in items" :key="e.id" :class="[e.status, e.kind]">
         <div class="time tabular">
-          <span class="start">{{ e.start }}</span>
-          <span class="end">{{ e.end }}</span>
+          <span class="start">{{ e.startLabel }}</span>
+          <span class="end">{{ e.endLabel }}</span>
         </div>
         <div class="info">
           <p class="title">

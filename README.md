@@ -5,12 +5,19 @@ Serve a replicare tutto su un altro Pi.
 
 ## Ripartire da un altro PC (es. ufficio)
 
+Prerequisiti sul PC: Node.js e **Java 21** (per gli emulatori Firebase):
+`winget install EclipseAdoptium.Temurin.21.JRE`
+
 ```powershell
 git clone https://github.com/NikoRossiWD/kioskpi.git
 cd kioskpi/dashboard
 npm install
-npm run dev
+npm run emulators     # terminale 1: Firestore + Auth locali
+npm run seed          # una volta: carica i dati demo
+npm run dev           # terminale 2: app su http://localhost:3000
 ```
+
+Poi sul Pi aggiornare l'URL con l'IP di questo PC (sezione 3.3).
 
 - **Wi-Fi dell'ufficio sul Pi** (tastiera + monitor, senza PC): [WIFI-UFFICIO.md](WIFI-UFFICIO.md),
   copia anche sul Pi con `cat ~/WIFI-UFFICIO.md`.
@@ -33,27 +40,27 @@ npm run dev
 Niente MagicMirror²: la dashboard è una **web app Nuxt scritta da noi**.
 
 ```
-┌──── Raspberry Pi 3 (Lite) ────┐          ┌──── App Nuxt ─────────────────────┐
-│ cage + Chromium kiosk ────────┼─ URL ──► │ ora: dev server sul PC            │
-│ cron: monitor on/off          │          │ poi: build sul Pi o cloud         │
-└───────────────────────────────┘          │ server routes: iCal, meteo, ...   │
-                                           └───────────────────────────────────┘
+┌── Raspberry Pi 3 (Lite) ──┐         ┌── Oggi: PC ─────────────────────┐   ┌── Finale: Firebase ─────┐
+│ cage + Chromium kiosk ────┼─ URL ─► │ Nuxt (SPA) npm run dev/preview  │ → │ Hosting (statico)       │
+│ (solo schermo)            │         │ Emulatori: Firestore + Auth     │ → │ Firestore + Auth        │
+└───────────────────────────┘         └─────────────────────────────────┘   └─────────────────────────┘
 ```
 
-- **Per ora tutto in locale**: niente Firebase finché non sappiamo cosa mostrare. L'app Nuxt gira
-  sul PC (`nuxi dev --host`) oppure, quando sarà stabile, come build servita dal Pi stesso.
-  Il cloud si aggiunge solo se serve (dati modificabili da telefono, ecc.).
-- Il Pi è un **thin client**: mostra solo una pagina.
-- **Durante lo sviluppo** Chromium sul Pi può aprire il dev server del PC
-  (`nuxi dev --host`, es. `http://<ip-pc>:3000`) → hot reload direttamente sul monitor.
+- **Il Pi è solo uno schermo**: Chromium apre un URL. Niente server né database sul Pi.
+- **Oggi tutto in locale "come se fosse Firebase"**: stesso SDK e stesso codice della produzione,
+  ma contro gli **emulatori Firebase** sul PC (progetto `demo-deskpi`, esiste solo in locale, gratis).
+- **Finale**: Firebase Hosting + Firestore + Auth (piano gratuito). Per passare basta la config
+  vera e `NUXT_PUBLIC_USE_EMULATORS=false`; sul Pi cambia solo `DESKPI_URL`.
+- Niente App Hosting / Cloud Functions per ora (a pagamento). Integrazioni come Google Calendar:
+  da decidere più avanti.
 
 ### Piano fasi aggiornato
 
 1. microSD con Raspberry Pi OS Lite 64-bit
 2. Primo avvio, SSH, aggiornamenti, controlli (temperatura, undervoltage, RAM), Wi-Fi ufficio
-3. Kiosk: `cage` + Chromium a schermo intero all'avvio (systemd), su una pagina di test
-4. Ottimizzazioni: cursore nascosto, no blanking di giorno, monitor spento 23:30–7:30, Wi-Fi stabile
-5. App Nuxt: scheletro, calendario (iCal via server route), meteo, to-do, note… (contenuti da decidere)
+3. ✅ Kiosk: `cage` + Chromium a schermo intero all'avvio (systemd)
+4. ⏸ Ottimizzazioni (rimandate): monitor spento di notte, Wi-Fi stabile, ecc. — da fare sulla build finale
+5. 🔄 App Nuxt + Firebase (emulatori in locale): UI fatta con dati demo; poi integrazioni reali
 
 *(Pulsantiera USB / ESP32: tolta dal piano il 2026-11-26, eventualmente da riprendere in futuro.)*
 
@@ -316,31 +323,14 @@ Dashboard visibile a schermo intero, nessuna barra del traduttore.
 
 ---
 
-## Produzione sul Pi (app servita dal Pi stesso)
+## Nota storica: app servita dal Pi (provata e rimossa)
 
-Motivo: il dev server dal PC è lento sul Pi 3 (centinaia di moduli non ottimizzati) e richiede
-il PC acceso. La build di produzione è compatta e rende il Pi autonomo.
+Il 2026-11-26 abbiamo provato a servire la build di produzione dal Pi con Node.js
+(più veloce del dev server). Rimossa lo stesso giorno: l'architettura finale è Firebase e il Pi
+resta solo uno schermo. Rimosso anche Node.js dal Pi (`apt-get purge nodejs`).
 
-- Node.js dal repository Debian: `sudo apt-get install -y nodejs` (v20.19).
-- `pi/deskpi-app.service` → server Nuxt in `/opt/deskpi` sulla porta 3000 (anche dalla rete).
-- Dati (note) in `/var/lib/deskpi` (`DESKPI_DATA_DIR`), fuori dalla build: sopravvivono ai deploy.
-- Il kiosk apre `http://localhost:3000/?kiosk`; lo script del browser aspetta che il server risponda.
-- Admin: `http://deskpi.local:3000/admin` (o `http://<ip-del-pi>:3000/admin`).
-
-**Deploy dal PC** (build + copia + riavvio, ~30 s):
-
-```powershell
-.\pi\deploy.ps1            # solo app
-.\pi\deploy.ps1 -System    # app + servizi/script/policy/URL (dopo modifiche in pi/)
-```
-
-La versione precedente resta in `/opt/deskpi.prev`. Rollback:
-`ssh deskpi "sudo rm -rf /opt/deskpi && sudo mv /opt/deskpi.prev /opt/deskpi && sudo systemctl restart deskpi-app"`
-
-**Sviluppo con hot reload sul monitor del Pi:** in `/etc/default/deskpi` usare l'URL del PC
-(vedi commento nel file), poi `sudo systemctl restart deskpi-kiosk`.
-
-Esito 2026-11-26: `deskpi-app` e `deskpi-kiosk` attivi; Node ~80 MB; 633 MB RAM disponibili.
+**Velocità sul Pi durante i test:** il dev server (`npm run dev`) è lento sul Pi 3 (tanti moduli
+non ottimizzati). Per vedere la velocità reale: `npm run build` e poi `npm run preview` sul PC.
 
 ---
 
@@ -360,41 +350,57 @@ Progetto Nuxt 4 minimale, scritto a mano (niente template), CSS semplice senza f
 Brand Webison (webison.it): font Red Hat Display (servito in locale con `@fontsource`),
 viola `#4a2ed8`, magenta `#ee258e`, giallo `#ffeb5f`, gradiente dell'hero.
 
+UI chiara, progettata per 1920×1080 senza scroll. Leggera per il Pi 3: niente blur, niente
+animazioni continue, l'ora si aggiorna una volta al minuto.
+
 ```
 dashboard/
-├─ nuxt.config.ts                 devtools off, CSS globale, storage "db" su .data/db
-├─ app/pages/index.vue            /       → schermo del Pi: orologio + 3 card
-├─ app/pages/admin.vue            /admin  → gestione contenuti (anche da telefono)
-├─ app/components/DashClock.vue   ora e data in italiano, aggiornata ogni secondo
-├─ app/components/DashCard.vue    contenitore dei widget (pallino colore brand)
-├─ app/components/DashNotes.vue   note sulla dashboard, ricaricate ogni 15 s
-├─ app/assets/css/main.css        variabili brand, tema scuro, ?kiosk = cursore nascosto
-├─ public/webison-logo.svg        logo (da webison.it)
-├─ shared/types/note.ts           tipo Note condiviso tra pagine e API
-└─ server/
-   ├─ utils/notes.ts              lettura/scrittura note + validazione
-   └─ api/notes/                  GET / POST /api/notes, PUT / DELETE /api/notes/:id
+├─ nuxt.config.ts                   SPA (ssr: false), config Firebase pubblica, emulatori sì/no
+├─ firebase.json / .firebaserc      emulatori (Firestore 8080, Auth 9099, UI 4000), progetto demo-deskpi
+├─ firestore.rules                  lettura libera, scrittura solo con login
+├─ seed/demo.json                   dati DEMO inventati (tracciati: servono anche in ufficio)
+├─ scripts/emulators.mjs            avvia gli emulatori salvando i dati in .firebase-data/ (non tracciata)
+├─ scripts/seed.mjs                 svuota l'emulatore e carica seed/demo.json (date relative a oggi)
+├─ shared/types/models.ts           modello dati: una collezione per sezione
+├─ app/plugins/firebase.client.ts   init Firebase; con emulatori usa l'host della pagina (PC, Pi, telefono)
+├─ app/composables/useCollection.ts collezione Firestore in tempo reale (onSnapshot)
+├─ app/composables/useNow.ts        ora condivisa, aggiornata ogni minuto
+├─ app/pages/index.vue              /       → schermo del Pi
+├─ app/pages/admin.vue              /admin  → login + note + focus (anche da telefono)
+├─ app/components/Dash*.vue         Hero (ora, meteo, numeri), Agenda, Focus, Progetti, Scadenze, Note
+├─ app/data/weather.ts              meteo demo statico (poi API Open-Meteo)
+└─ public/webison-logo*.svg         logo originale (su fondo colorato) e variante per fondo chiaro
 ```
 
-### Contenuti e admin
+### Dati (Firestore)
 
-- Le note sono salvate in `dashboard/.data/db/notes.json` (escluso da git): semplici e locali.
-- Gestione da `http://<ip>:3000/admin`: aggiungi, modifica, elimina, scegli il colore.
-- La dashboard rilegge le note ogni 15 secondi.
-- ⚠️ **Admin e API di scrittura non sono protetti**: chiunque sia sulla stessa rete può modificare
-  le note. Protezione prevista con **Firebase Auth** (il punto da toccare è la funzione `api()` in
-  `admin.vue` e un controllo del token nelle API `server/api/notes/*`).
+| Collezione | Sezione | Fonte futura |
+|---|---|---|
+| `events` | Agenda di oggi | Google Calendar |
+| `focus` | Focus di oggi | admin / to-do |
+| `projects` | Progetti attivi | admin / gestionale |
+| `stats` | numeri nella fascia in alto | CRM / fatturazione |
+| `deadlines` | Scadenze | admin / calendario |
+| `notes` | Note | admin |
 
-Comandi (dal PC, nella cartella `dashboard`):
+- **Emulatori:** `npm run emulators` (UI su `http://localhost:4000` per vedere/modificare i dati).
+  I dati restano in `dashboard/.firebase-data/` (salvati alla chiusura con Ctrl+C), **mai nel repo**.
+- **Dati demo:** `npm run seed` → cancella tutto nell'emulatore e ricarica `seed/demo.json`.
+- **Tempo reale:** una modifica (admin o UI emulatori) compare subito sullo schermo.
+- **Admin:** `http://<ip-del-pc>:3000/admin` → "Accedi con Google": in locale l'emulatore Auth
+  mostra un account di prova (nessun account reale). Le regole rifiutano le scritture senza login.
+- ⚠️ Prima di andare online: oggi la **lettura è pubblica** (va bene solo in locale). In produzione
+  il kiosk dovrà autenticarsi (TODO in `firestore.rules`).
+
+### Comandi (dal PC, cartella `dashboard`)
 
 ```powershell
-npm install
-npm run dev        # avvia su http://localhost:3000 e su tutta la rete locale (--host 0.0.0.0)
-npm run build      # build di produzione in .output/
+npm run emulators   # Firestore + Auth + UI (serve Java)
+npm run seed        # dati demo
+npm run dev         # sviluppo con hot reload, anche dalla rete (--host 0.0.0.0)
+npm run build; npm run preview   # versione ottimizzata (velocità reale sul Pi)
 ```
 
-- Dal Pi (fase 3) Chromium aprirà `http://<ip-del-pc>:3000/?kiosk` durante lo sviluppo.
-  IP del PC a casa il 2026-11-26: `192.168.0.133` (può cambiare).
-- Al primo `npm run dev` Windows può chiedere di consentire Node.js nel firewall: consentire
-  **solo sulle reti private**, altrimenti il Pi non raggiunge il PC.
-- Risoluzione del monitor di test: 1920×1080.
+- Il Pi apre `http://<ip-del-pc>:3000/?kiosk`. IP del PC a casa il 2026-11-26: `192.168.0.133`.
+- Windows chiederà di consentire **Node.js** e **Java** nel firewall: consentire **solo sulle reti
+  private**, altrimenti il Pi non raggiunge app ed emulatori (porte 3000, 8080, 9099).

@@ -1,75 +1,76 @@
 <script setup lang="ts">
-import { NOTE_ACCENTS, NOTE_MAX_LENGTH, type Note, type NoteAccent } from '#shared/types/note'
+import { addDoc, collection, deleteDoc, doc, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth'
+import { NOTE_ACCENTS, NOTE_MAX_LENGTH, type FocusDoc, type NoteAccent, type NoteDoc, type WithId } from '#shared/types/models'
 
 // Pannello per gestire i contenuti della dashboard. Pensato anche per il telefono.
-// Nessuna protezione per ora: accessibile da chi è sulla stessa rete. Login con Firebase in seguito.
+// Le scritture richiedono il login (regole Firestore). In locale l'emulatore Auth
+// mostra un account di prova: nessun account Google reale.
 useHead({ title: 'DeskPi · Admin' })
+
+const { $db, $auth } = useNuxtApp()
+
+const user = ref<User | null>(null)
+const authReady = ref(false)
+onAuthStateChanged($auth, (u) => { user.value = u; authReady.value = true })
 
 const error = ref('')
 const busy = ref(false)
 
-const notes = ref<Note[]>([])
+async function run(fn: () => Promise<unknown>) {
+  busy.value = true
+  error.value = ''
+  try { await fn() }
+  catch (e: any) { error.value = e?.message || 'Errore' }
+  finally { busy.value = false }
+}
+
+const login = () => run(() => signInWithPopup($auth, new GoogleAuthProvider()))
+const logout = () => run(() => signOut($auth))
+
+// --- Note ---
+const { items: notesRaw } = useCollection<NoteDoc>('notes')
+const notes = computed(() =>
+  [...notesRaw.value].sort((a, b) => (b.updatedAt?.toMillis() ?? Date.now()) - (a.updatedAt?.toMillis() ?? Date.now())),
+)
+
+const accentLabel: Record<NoteAccent, string> = { primary: 'Viola', secondary: 'Magenta', tertiary: 'Giallo' }
 const draft = reactive<{ text: string, accent: NoteAccent }>({ text: '', accent: 'tertiary' })
 const editing = ref<string | null>(null)
 const editDraft = reactive<{ text: string, accent: NoteAccent }>({ text: '', accent: 'tertiary' })
 
-const accentLabel: Record<NoteAccent, string> = { primary: 'Viola', secondary: 'Magenta', tertiary: 'Giallo' }
-
-// Unico punto da cui passano le chiamate di scrittura: qui si aggiungerà il token Firebase.
-function api<T>(url: string, opts: Parameters<typeof $fetch>[1] = {}) {
-  return $fetch<T>(url, opts)
-}
-
-async function run(fn: () => Promise<unknown>) {
-  busy.value = true
-  error.value = ''
-  try {
-    await fn()
-  }
-  catch (e: any) {
-    error.value = e?.data?.statusMessage || e?.statusMessage || 'Errore di rete'
-  }
-  finally {
-    busy.value = false
-  }
-}
-
-async function load() {
-  notes.value = await $fetch<Note[]>('/api/notes')
-}
-
-async function addNote() {
-  if (!draft.text.trim()) return
-  await run(async () => {
-    await api('/api/notes', { method: 'POST', body: { ...draft } })
+function addNote() {
+  const text = draft.text.trim()
+  if (!text) return
+  return run(async () => {
+    await addDoc(collection($db, 'notes'), { text, accent: draft.accent, updatedAt: serverTimestamp() })
     draft.text = ''
-    await load()
   })
 }
 
-function startEdit(note: Note) {
+function startEdit(note: WithId<NoteDoc>) {
   editing.value = note.id
   editDraft.text = note.text
   editDraft.accent = note.accent
 }
 
-async function saveEdit(id: string) {
-  await run(async () => {
-    await api(`/api/notes/${id}`, { method: 'PUT', body: { ...editDraft } })
+function saveEdit(id: string) {
+  const text = editDraft.text.trim()
+  if (!text) return
+  return run(async () => {
+    await updateDoc(doc($db, 'notes', id), { text, accent: editDraft.accent, updatedAt: serverTimestamp() })
     editing.value = null
-    await load()
   })
 }
 
-async function remove(note: Note) {
+function removeNote(note: WithId<NoteDoc>) {
   if (!confirm(`Eliminare la nota?\n\n"${note.text.slice(0, 80)}"`)) return
-  await run(async () => {
-    await api(`/api/notes/${note.id}`, { method: 'DELETE' })
-    await load()
-  })
+  return run(() => deleteDoc(doc($db, 'notes', note.id)))
 }
 
-onMounted(() => run(load))
+// --- Focus di oggi ---
+const { items: focus } = useCollection<FocusDoc>('focus', 'order')
+const toggleFocus = (f: WithId<FocusDoc>) => run(() => updateDoc(doc($db, 'focus', f.id), { done: !f.done }))
 </script>
 
 <template>
@@ -79,11 +80,32 @@ onMounted(() => run(load))
     <header>
       <img src="/webison-logo-dark.svg" alt="Webison" width="161" height="33" class="logo">
       <span class="title">DeskPi · Admin</span>
+      <button v-if="user" class="link" @click="logout">Esci</button>
     </header>
 
     <p v-if="error" class="error" role="alert">{{ error }}</p>
 
-    <!-- Note -->
+    <section v-if="authReady && !user" class="panel login">
+      <h2>Accesso</h2>
+      <p class="muted">Accedi per modificare i contenuti della dashboard.</p>
+      <button class="btn" :disabled="busy" @click="login">Accedi con Google</button>
+    </section>
+
+    <template v-else-if="user">
+      <p class="muted small">Connesso come {{ user.email || user.displayName }}</p>
+
+      <section class="panel">
+        <h2>Focus di oggi</h2>
+        <ul class="focus">
+          <li v-for="f in focus" :key="f.id">
+            <label>
+              <input type="checkbox" :checked="f.done" :disabled="busy" @change="toggleFocus(f)">
+              <span :class="{ done: f.done }">{{ f.text }}</span>
+            </label>
+          </li>
+        </ul>
+      </section>
+
       <section class="panel">
         <h2>Nuova nota</h2>
         <form class="note-form" @submit.prevent="addNote">
@@ -125,12 +147,13 @@ onMounted(() => run(load))
               <p class="text">{{ note.text }}</p>
               <div class="actions">
                 <button class="link" @click="startEdit(note)">Modifica</button>
-                <button class="link danger" @click="remove(note)">Elimina</button>
+                <button class="link danger" @click="removeNote(note)">Elimina</button>
               </div>
             </template>
           </li>
         </ul>
       </section>
+    </template>
   </div>
 </template>
 
@@ -169,6 +192,7 @@ header {
   flex-direction: column;
   gap: 16px;
 }
+.login { align-items: flex-start; }
 
 h2 {
   font-size: 0.9rem;
@@ -229,6 +253,24 @@ button:focus-visible {
 .link:hover { color: var(--text); }
 .link.danger:hover { color: var(--brand-secondary); }
 
+.focus {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.focus label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.focus input { width: 20px; height: 20px; accent-color: var(--brand-secondary); }
+.focus .done { color: var(--faint); text-decoration: line-through; }
+
 .accents { display: flex; gap: 10px; }
 .accent {
   width: 28px;
@@ -270,6 +312,7 @@ button:focus-visible {
 .actions { display: flex; gap: 8px; justify-content: flex-end; }
 
 .muted { color: var(--muted); }
+.small { font-size: 0.9rem; }
 .error {
   color: var(--text);
   background: var(--brand-secondary-soft);

@@ -4,8 +4,8 @@
 
 [Unit]
 Description=DeskPi kiosk (cage + Chromium)
-After=systemd-user-sessions.service network-online.target dbus.socket systemd-logind.service deskpi-app.service
-Wants=network-online.target dbus.socket systemd-logind.service deskpi-app.service
+After=systemd-user-sessions.service network-online.target dbus.socket systemd-logind.service
+Wants=network-online.target dbus.socket systemd-logind.service
 # Prende il posto del login testuale sul monitor (tty1)
 Conflicts=getty@tty1.service
 After=getty@tty1.service

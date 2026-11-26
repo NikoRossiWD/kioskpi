@@ -2,6 +2,11 @@ node_modules
 .nuxt
 .output
 .data
+# dati locali degli emulatori Firebase (test, mai nel repo)
+.firebase-data
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
 .env
 .env.*
 !.env.example

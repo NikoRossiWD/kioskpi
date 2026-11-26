@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { projects } from '~/data/demo'
+import type { ProjectDoc } from '#shared/types/models'
+
+const now = useNow()
+const { items } = useCollection<ProjectDoc>('projects', 'order')
+const projects = computed(() => items.value.map(p => ({ ...p, dueInDays: daysUntil(p.due, now.value) })))
 
 function due(days: number) {
+  if (days < 0) return 'Scaduto'
   if (days <= 0) return 'Scade oggi'
   if (days === 1) return 'Domani'
   return `${days} giorni`
@@ -11,7 +16,7 @@ function due(days: number) {
 <template>
   <DashCard title="Progetti attivi" accent="teal" :meta="`${projects.length} in corso`">
     <ul class="projects">
-      <li v-for="p in projects" :key="p.name + p.client" :class="p.color">
+      <li v-for="p in projects" :key="p.id" :class="p.color">
         <div class="head">
           <p class="name">{{ p.name }} <span class="client">· {{ p.client }}</span></p>
           <p class="due tabular" :class="{ soon: p.dueInDays <= 5 }">{{ due(p.dueInDays) }}</p>
