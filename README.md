@@ -3,6 +3,21 @@
 Diario di bordo del setup: cosa è stato fatto, con quali comandi e come ripristinare.
 Serve a replicare tutto su un altro Pi.
 
+## Ripartire da un altro PC (es. ufficio)
+
+```powershell
+git clone https://github.com/NikoRossiWD/kioskpi.git
+cd kioskpi/dashboard
+npm install
+npm run dev
+```
+
+- **Wi-Fi dell'ufficio sul Pi** (tastiera + monitor, senza PC): [WIFI-UFFICIO.md](WIFI-UFFICIO.md),
+  copia anche sul Pi con `cat ~/WIFI-UFFICIO.md`.
+- **SSH dal nuovo PC:** `ssh raux@deskpi.local` (o l'IP) con la password; per entrare senza
+  password creare una chiave nuova su quel PC (sezione 2.3). Non copiare la chiave privata.
+- Il repo è **pubblico**: mai committare password, token, URL iCal segreti (usare `.env`, già ignorato).
+
 ## Hardware
 
 | Componente | Dettagli |
