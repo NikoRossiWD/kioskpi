@@ -17,12 +17,14 @@ export interface EventDoc {
   end: Timestamp
 }
 
-/** focus — le 3 priorità del giorno */
+/** focus — to-do di oggi, gestiti da /admin (aggiungi, modifica, elimina, riordina) */
 export interface FocusDoc {
   order: number
   text: string
   done: boolean
 }
+
+export const FOCUS_MAX_LENGTH = 140
 
 /** projects */
 export interface ProjectDoc {
