@@ -14,7 +14,7 @@ After=getty@tty1.service
 Type=simple
 User=raux
 EnvironmentFile=-/etc/default/deskpi
-# Cursore trasparente (creato da invisible-cursor.py): cage disegna il puntatore anche senza mouse
+# Cursore trasparente: invisible-cursor.py lo imposta anche come tema "default" (cage 0.3 usa solo quello)
 Environment=XCURSOR_THEME=deskpi-invisible XCURSOR_SIZE=24
 # -s: permette di cambiare console (Ctrl+Alt+F2) mentre cage è attivo
 ExecStart=/usr/bin/cage -s -- /usr/local/bin/deskpi-browser
