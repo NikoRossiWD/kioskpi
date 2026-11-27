@@ -20,8 +20,11 @@ export default defineNuxtConfig({
       useEmulators: true,
       // Città del meteo (Open-Meteo). Coordinate: https://open-meteo.com/en/docs/geocoding-api
       weather: { city: 'Monza', latitude: 45.5845, longitude: 9.2744 },
-      // Punto di partenza per "Ritorno a casa" (ora: centro di Monza; mettere l'indirizzo dell'ufficio)
-      office: { latitude: 45.5845, longitude: 9.2744 },
+      // Punto di partenza per "Ritorno a casa": ufficio (Via Schiaffino, Monza)
+      office: { latitude: 45.58767, longitude: 9.26162 },
+      // Chiave TomTom (gratis, 2.500 richieste/giorno) per i tempi CON traffico: NUXT_PUBLIC_TOMTOM_KEY nel .env.
+      // Vuota = OSRM (gratis, senza chiave, ma senza traffico).
+      tomtomKey: '',
     },
   },
 

@@ -3,22 +3,35 @@ import type { CommuteDoc } from '#shared/types/models'
 
 /**
  * Ritorno a casa: tempo in auto dall'ufficio a ogni destinazione (collezione "commute").
- * Percorsi da OSRM (router.project-osrm.org): gratuito, senza chiave, ma SENZA traffico.
+ * Con NUXT_PUBLIC_TOMTOM_KEY: TomTom Routing (gratis fino a 2.500 richieste/giorno), traffico in tempo reale.
+ * Senza chiave: OSRM (router.project-osrm.org), gratis e senza chiave ma SENZA traffico.
  * In più guarda il meteo delle prossime ore per avvisare se sta per piovere.
  */
-const { office } = useRuntimeConfig().public
+const { office, tomtomKey } = useRuntimeConfig().public
 const { items: places } = useCollection<CommuteDoc>('commute', 'order')
 const { weather } = useWeather()
 
 const minutes = reactive<Record<string, number | null>>({})
+const traffic = !!tomtomKey
+
+async function seconds(p: CommuteDoc): Promise<number> {
+  if (traffic) {
+    const r = await $fetch<{ routes: { summary: { travelTimeInSeconds: number } }[] }>(
+      `https://api.tomtom.com/routing/1/calculateRoute/${office.latitude},${office.longitude}:${p.lat},${p.lon}/json`,
+      { query: { key: tomtomKey, traffic: 'true', travelMode: 'car', routeType: 'fastest' } },
+    )
+    return r.routes[0]!.summary.travelTimeInSeconds
+  }
+  const r = await $fetch<{ routes: { duration: number }[] }>(
+    `https://router.project-osrm.org/route/v1/driving/${office.longitude},${office.latitude};${p.lon},${p.lat}`,
+    { query: { overview: 'false' } },
+  )
+  return r.routes[0]!.duration
+}
 
 async function route(p: CommuteDoc & { id: string }) {
   try {
-    const r = await $fetch<{ routes: { duration: number }[] }>(
-      `https://router.project-osrm.org/route/v1/driving/${office.longitude},${office.latitude};${p.lon},${p.lat}`,
-      { query: { overview: 'false' } },
-    )
-    minutes[p.id] = Math.round(r.routes[0]!.duration / 60)
+    minutes[p.id] = Math.round(await seconds(p) / 60)
   }
   catch {
     // teniamo l'ultimo valore
@@ -28,7 +41,7 @@ const loadAll = () => places.value.forEach(route)
 
 watch(() => places.value.map(p => `${p.id}${p.lat}${p.lon}`).join(), loadAll)
 let interval: ReturnType<typeof setInterval> | undefined
-onMounted(() => { interval = setInterval(loadAll, 30 * 60_000) })
+onMounted(() => { interval = setInterval(loadAll, (traffic ? 10 : 30) * 60_000) })
 onBeforeUnmount(() => clearInterval(interval))
 
 // Prima ora con pioggia probabile (≥ 50%) nelle prossime 6
@@ -37,7 +50,7 @@ const raining = computed(() => (weather.value?.icon === 'rain' || weather.value?
 </script>
 
 <template>
-  <DashCard title="Ritorno a casa" accent="primary" meta="senza traffico">
+  <DashCard title="Ritorno a casa" accent="primary" :meta="traffic ? 'con traffico' : 'senza traffico'">
     <ul class="places">
       <li v-for="p in places" :key="p.id">
         <DashIcon name="car" :size="22" class="car" />

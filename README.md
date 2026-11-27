@@ -442,11 +442,15 @@ dashboard/
 
 ### Ritorno a casa, musica
 
-- **Ritorno a casa** (in basso a destra, accanto al QR): tempi in auto da [OSRM](https://project-osrm.org) (gratis, senza chiave,
-  **senza traffico**), aggiornati ogni 30 min, + avviso pioggia dalle prossime 6 ore del meteo.
-  Partenza: `runtimeConfig.public.office` in `nuxt.config.ts` (ora centro di Monza: mettere
-  l'indirizzo dell'ufficio). Destinazioni nella collezione `commute`: nel repo pubblico solo i
-  comuni; i nomi si possono aggiungere nell'etichetta dall'UI degli emulatori.
+- **Ritorno a casa** (in basso a destra, accanto al QR): tempi in auto dall'ufficio (Via Schiaffino,
+  Monza: `runtimeConfig.public.office` in `nuxt.config.ts`) + avviso pioggia dalle prossime 6 ore del meteo.
+  - **Senza chiave:** [OSRM](https://project-osrm.org), gratis, **senza traffico** (aggiornato ogni 30 min).
+  - **Con traffico reale (consigliato):** crea una chiave gratuita su
+    [developer.tomtom.com](https://developer.tomtom.com) (2.500 richieste/giorno, niente carta) e mettila in
+    `dashboard/.env` come `NUXT_PUBLIC_TOMTOM_KEY=...`, poi riavvia `npm run dev`. Aggiorna ogni 10 min
+    (~300 richieste/giorno con 2 mete) e la card mostra "con traffico".
+  - Destinazioni nella collezione `commute`. Gli indirizzi veri stanno in `dashboard/seed/commute.local.json`
+    (fuori dal repo, `npm run seed` li usa se c'è); nel repo pubblico solo i comuni.
 - **Musica:** legge un documento della collezione `music`; un futuro connettore Spotify lo
   aggiornerà (il kiosk non deve fare login a Spotify).
 - I numeri CRM (lead, preventivi, ore) sono stati tolti: torneranno quando ci sarà il CRM.

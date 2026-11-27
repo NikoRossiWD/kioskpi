@@ -3,6 +3,7 @@
 //
 // Uso: npm run seed   (con gli emulatori accesi: npm run emulators)
 import { readFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 
 const PROJECT = 'demo-deskpi'
 const HOST = process.env.FIRESTORE_EMULATOR_HOST || '127.0.0.1:8080'
@@ -60,7 +61,10 @@ for (const p of demo.projects) {
   const { dueInDays, ...rest } = p
   await add('projects', { ...rest, due: inDays(dueInDays) })
 }
-for (const c of demo.commute) await add('commute', c)
+// Destinazioni vere (indirizzi di casa) in seed/commute.local.json, fuori dal repo; se manca, i comuni del demo
+const localCommute = new URL('../seed/commute.local.json', import.meta.url)
+const commute = existsSync(localCommute) ? JSON.parse(await readFile(localCommute, 'utf8')) : demo.commute
+for (const c of commute) await add('commute', c)
 for (const m of demo.music) await add('music', m)
 for (const d of demo.deadlines) {
   const { dueInDays, ...rest } = d
