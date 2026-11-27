@@ -67,7 +67,7 @@ html:has(body.screen) {
   overflow: hidden;
 }
 
-/* Sul Pi il cursore viene nascosto anche a livello di sistema; questo è un doppio sicuro */
+/* Sul Pi il cursore è nascosto anche a livello di sistema (tema deskpi-invisible); questo è un doppio sicuro */
 body.kiosk { cursor: none; }
 
 .tabular { font-variant-numeric: tabular-nums; }

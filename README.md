@@ -8,6 +8,9 @@ Serve a replicare tutto su un altro Pi.
 **1. Pi sul Wi-Fi dell'ufficio** (tastiera + monitor sul Pi, senza PC):
 segui [WIFI-UFFICIO.md](WIFI-UFFICIO.md). Copia anche sul Pi: dalla console `cat ~/WIFI-UFFICIO.md`
 (con la dashboard a schermo: **Ctrl+Alt+F2** per la console). Annota l'IP del Pi (`hostname -I`).
+⚠️ Con router recenti in **WPA2+WPA3** (come il Fastweb dell'ufficio) il Pi 3 non si collega e
+chiede la password all'infinito: serve una rete in **solo WPA2**. Più semplice: **cavo di rete** dal Pi
+al router e Wi-Fi configurato dal PC via SSH (WIFI-UFFICIO.md, sezione 7).
 
 **2. PC dell'ufficio: prerequisiti** (una volta) — **Node.js 20.19 o superiore** (consigliato 22/24,
 verifica con `node -v`), Git e **Java 21** per gli emulatori:
@@ -16,9 +19,11 @@ verifica con `node -v`), Git e **Java 21** per gli emulatori:
 winget install EclipseAdoptium.Temurin.21.JRE
 ```
 
-(chiudi e riapri il terminale dopo l'installazione di Java)
+(chiudi e riapri il terminale dopo l'installazione di Java). Se winget dice che il pacchetto non esiste:
+`winget source update` e riprova; se ancora niente, installer `.msi` da <https://adoptium.net/temurin/releases/?version=21&os=windows>.
 
-**3. Progetto:**
+**3. Progetto** — `npm install` va lanciato dentro **`dashboard`** (nella cartella principale non c'è
+`package.json` e npm dà errore):
 
 ```powershell
 git clone https://github.com/NikoRossiWD/kioskpi.git
@@ -112,7 +117,7 @@ Niente MagicMirror²: la dashboard è una **web app Nuxt scritta da noi**.
 | Utente | `raux` |
 | Password | *non scriverla qui: tienila nel password manager* |
 | Wi-Fi casa | rete di casa (nome non pubblicato: repo pubblico), un solo nome per 2,4 GHz (canale 4) e 5 GHz; il Pi 3 usa in automatico la 2,4 GHz |
-| Wi-Fi ufficio | da aggiungere sul posto con [WIFI-UFFICIO.md](WIFI-UFFICIO.md) |
+| Wi-Fi ufficio | ✅ 2026-11-27, connessione `ufficio2` sulla "rete personalizzata" del router in solo WPA2 (la rete principale WPA2+WPA3 non funziona col Pi 3: [WIFI-UFFICIO.md](WIFI-UFFICIO.md)) |
 | Paese Wi-Fi | `IT` |
 | Fuso orario | `Europe/Rome` |
 | Tastiera | `it` |
@@ -212,11 +217,15 @@ Risultato del 2026-11-26:
 
 ### 2.3 Chiave SSH (accesso senza password)
 
-Sul PC (PowerShell) — chiave dedicata, senza passphrase:
+Sul PC (PowerShell) — chiave dedicata, senza passphrase (alla richiesta della passphrase premi
+**Invio due volte**):
 
 ```powershell
-ssh-keygen -t ed25519 -f "$env:USERPROFILE\.ssh\deskpi_ed25519" -N '""' -C "deskpi"
+ssh-keygen -t ed25519 -f "$env:USERPROFILE\.ssh\deskpi_ed25519" -C "deskpi"
 ```
+
+⚠️ Non usare `-N '""'`: in PowerShell 7 la passphrase diventa letteralmente `""` e SSH continua a
+chiedere la password. Se è già successo: `ssh-keygen -p -P '""' -N '' -f "$env:USERPROFILE\.ssh\deskpi_ed25519"`.
 
 File `C:\Users\<utente>\.ssh\config` (scorciatoia `ssh deskpi`):
 
@@ -320,14 +329,22 @@ Esito 2026-11-26: 190 pacchetti in ~10 min (cage 0.3.1, Chromium 156). Disco: 34
 | `pi/deskpi.env` | `/etc/default/deskpi` | **URL da mostrare** (`DESKPI_URL=...`) |
 | `pi/deskpi-browser` | `/usr/local/bin/deskpi-browser` | avvia Chromium in kiosk con le opzioni giuste |
 | `pi/deskpi-kiosk.service` | `/etc/systemd/system/deskpi-kiosk.service` | servizio: cage + Chromium su tty1, riavvio automatico dopo 5 s |
+| `pi/invisible-cursor.py` | crea `/usr/share/icons/deskpi-invisible` | tema cursore trasparente: cage disegna il puntatore al centro anche senza mouse |
 
 Installazione (dalla cartella `pi/` sul PC):
 
 ```powershell
-scp deskpi.env deskpi-browser deskpi-kiosk.service deskpi:/tmp/
-ssh deskpi "cd /tmp && sed -i 's/\r$//' deskpi.env deskpi-browser deskpi-kiosk.service && sudo install -m 644 deskpi.env /etc/default/deskpi && sudo install -m 755 deskpi-browser /usr/local/bin/deskpi-browser && sudo install -m 644 deskpi-kiosk.service /etc/systemd/system/deskpi-kiosk.service && sudo systemd-analyze verify /etc/systemd/system/deskpi-kiosk.service"
+scp deskpi.env deskpi-browser deskpi-kiosk.service invisible-cursor.py deskpi:/tmp/
+ssh deskpi "cd /tmp && sed -i 's/\r$//' deskpi.env deskpi-browser deskpi-kiosk.service invisible-cursor.py && sudo python3 invisible-cursor.py && sudo install -m 644 deskpi.env /etc/default/deskpi && sudo install -m 755 deskpi-browser /usr/local/bin/deskpi-browser && sudo install -m 644 deskpi-kiosk.service /etc/systemd/system/deskpi-kiosk.service && sudo systemd-analyze verify /etc/systemd/system/deskpi-kiosk.service"
 ssh deskpi "sudo systemctl daemon-reload && sudo systemctl enable --now deskpi-kiosk"
 ```
+
+**Cursore:** senza mouse collegato cage mostra comunque una freccia al centro dello schermo (la pagina
+non riceve mai il puntatore, quindi il suo `cursor: none` non basta). Il servizio usa il tema
+`deskpi-invisible` (`XCURSOR_THEME`). Aggiunto il 2026-11-27.
+
+**Riavvio lento:** `systemctl restart deskpi-kiosk` impiega ~90 s, perché cage non si chiude con
+SIGTERM e systemd lo forza allo scadere del timeout. Da SSH usare `sudo systemctl restart --no-block deskpi-kiosk`.
 
 (`sed` toglie eventuali fine riga Windows; `install` copia e imposta i permessi in un colpo solo.)
 
@@ -464,6 +481,8 @@ npm run dev         # sviluppo con hot reload, anche dalla rete (--host 0.0.0.0)
 npm run build; npm run preview   # versione ottimizzata (velocità reale sul Pi)
 ```
 
-- Il Pi apre `http://<ip-del-pc>:3000/?kiosk`. IP del PC a casa il 2026-11-26: `192.168.0.133`.
-- Windows chiederà di consentire **Node.js** e **Java** nel firewall: consentire **solo sulle reti
-  private**, altrimenti il Pi non raggiunge app ed emulatori (porte 3000, 8080, 9099).
+- Il Pi apre `http://<ip-del-pc>:3000/?kiosk`. IP del PC a casa il 2026-11-26: `192.168.0.133`;
+  in ufficio il 2026-11-27: `192.168.1.103` (Pi via Wi-Fi: `192.168.1.191`). IP dal DHCP: possono cambiare.
+- Windows chiederà di consentire **Node.js** e **Java** nel firewall: devono essere consentiti sul
+  profilo della rete in uso (privata o pubblica, vedi checklist punto 4), altrimenti il Pi non
+  raggiunge app ed emulatori (porte 3000, 8080, 9099).
